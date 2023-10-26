@@ -27,6 +27,7 @@ public class Authentication {
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequestDTO loginRequestDTO){
+        System.out.println(loginRequestDTO.getUsername());
         LoginResponse user = accountService.login(loginRequestDTO);
         return responseHandler.response(200, "Login success!", user);
     }
@@ -34,6 +35,7 @@ public class Authentication {
 
     @PostMapping("/signup")
     public ResponseEntity signUp(@RequestBody SignUpRequestDTO signUpRequestDTO){
+
         accountService.addAccount(signUpRequestDTO);
         return responseHandler.response(200, "Sign Up success!", null);
     }

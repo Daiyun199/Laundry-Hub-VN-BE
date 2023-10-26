@@ -1,4 +1,5 @@
 package start.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -32,6 +33,7 @@ public class OrderDetail {
     }
    @ManyToOne
    @JoinColumn(name="option_id")
+   @JsonIgnore
     private Option option;
 
     public void setPrice(float price) {
