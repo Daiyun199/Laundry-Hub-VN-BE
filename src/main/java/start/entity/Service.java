@@ -1,4 +1,6 @@
 package start.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +21,7 @@ import java.util.List;
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
     private String name;
     private float price;
@@ -28,12 +31,17 @@ public class Service {
 
     @ManyToOne
     @JoinColumn(name="store_id")
+    @JsonIgnore
     private Store store;
 
+
+
     @OneToMany(mappedBy = "service")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<OrderDetail> orderDetails;
 
     @OneToMany(mappedBy = "service")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<Option> options;
 
     public void setId(long id) {

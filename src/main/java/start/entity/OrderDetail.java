@@ -30,6 +30,9 @@ public class OrderDetail {
     public void setId(long id) {
         this.id = id;
     }
+   @ManyToOne
+   @JoinColumn(name="option_id")
+    private Option option;
 
     public void setPrice(float price) {
         this.price = price;

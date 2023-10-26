@@ -8,6 +8,8 @@ import start.enums.RoleEnum;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -20,6 +22,9 @@ public class Option {
     private long id ;
     private String name;
     private float price;
+
+    @OneToMany(mappedBy = "option")
+    private List<OrderDetail> orderDetail;
 //
     @ManyToOne
     @JoinColumn(name="service_id")
