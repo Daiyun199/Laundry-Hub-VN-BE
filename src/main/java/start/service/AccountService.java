@@ -65,7 +65,7 @@ public class AccountService {
     }
     public LoginResponse login(LoginRequestDTO loginRequestDTO){
         Authentication authentication = null;
-        try {
+
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequestDTO.getUsername(),
@@ -73,10 +73,7 @@ public class AccountService {
                     )
             );
 
-        } catch (Exception e) {
-//            throw new EntityNotFound("Username or password invalid");
-            e.printStackTrace();
-        }
+
         Account account = accountRepository.findUserByUsername(((Account) authentication.getPrincipal()).getUsername());
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setUsername(account.getUsername());

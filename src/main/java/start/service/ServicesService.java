@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import start.dto.request.ServiceDTO;
 import start.entity.Store;
+import start.enums.StatusEnum;
 import start.exception.exceptions.BadRequest;
 import start.repository.ServiceRepository;
 import start.repository.StoreRepository;
@@ -29,7 +30,8 @@ public class ServicesService {
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new BadRequest("Can't find this store"));
         start.entity.Service ser = serviceRepository.findById(serviceId).orElseThrow(()-> new BadRequest("Can't find thís Service"));
         ser.setStore(store);
-        serviceRepository.delete(ser);
+        ser.setStatus(StatusEnum.DEACTIVE);
+        serviceRepository.save(ser);
     }
     public start.entity.Service updateService(long storeId, long ServiceId , ServiceDTO request){
         Store store = storeRepository.findStoreById(storeId);
@@ -37,7 +39,8 @@ public class ServicesService {
         ser.setName(request.getName());
         ser.setDescription(request.getDescription());
         ser.setFigure(request.getFigure());
-        ser.setPrice(request.getPrice());
+        ser.setTitle(request.getTitle());
+        ser.setStatus(request.getStatus());
         ser.setStore(store);
         serviceRepository.save(ser);
         return ser;

@@ -6,6 +6,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import start.enums.RoleEnum;
+import start.enums.StatusEnum;
+import start.enums.TitleEnum;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -24,9 +26,13 @@ public class Service {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
     private String name;
-    private float price;
     private String description;
     private String figure;
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
+    @Enumerated(EnumType.STRING)
+    private TitleEnum title;
+
 
 
     @ManyToOne
@@ -37,42 +43,10 @@ public class Service {
 
 
     @OneToMany(mappedBy = "service")
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonIgnore
     private List<OrderDetail> orderDetails;
 
     @OneToMany(mappedBy = "service")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<Option> options;
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setFigure(String figure) {
-        this.figure = figure;
-    }
-
-    public void setStore(Store store) {
-        this.store = store;
-    }
-
-    public void setOrderDetails(List<OrderDetail> orderDetails) {
-        this.orderDetails = orderDetails;
-    }
-
-    public void setOptions(List<Option> options) {
-        this.options = options;
-    }
 }

@@ -22,10 +22,12 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name="service_id")
+    @JsonIgnore
     private Service service;
 
     @ManyToOne
     @JoinColumn(name="order_id")
+    @JsonIgnore
     private Order order;
 
     public void setId(long id) {
@@ -47,4 +49,6 @@ public class OrderDetail {
     public void setOrder(Order order) {
         this.order = order;
     }
+
+
 }

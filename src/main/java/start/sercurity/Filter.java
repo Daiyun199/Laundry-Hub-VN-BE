@@ -39,16 +39,16 @@ public class Filter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String uri = request.getRequestURI();
-        boolean isAuthen = authenPath.isAuthen(uri);
+        boolean isAuthen = authenPath.isAuthen(request);
         if(isAuthen){
-            String id;
+            String username;
             String token = getToken(request);
             if(token == null) {
                 responseHandler.responseResolver(request,response, new NotAllowException("Empty Token!"));
                 return;
             }
             try {
-                id = tokenHandler.getInfoByToken(token);
+                username = tokenHandler.getInfoByToken(token);
             } catch (ExpiredJwtException expiredJwtException) {
                 responseHandler.responseResolver(request,response, new NotAllowException("Expired Token!"));
                 return;
@@ -56,10 +56,10 @@ public class Filter extends OncePerRequestFilter {
                 responseHandler.responseResolver(request,response, new NotAllowException("Invalid Token!"));
                 return;
             }
-            if (id != null) {
+            if (username != null) {
                 // token chuẩn
                 // tạo 1 đối tượng mà spring security hiểu
-                Account account = userRepository.findUserByUsername(id);
+                Account account = userRepository.findUserByUsername(username);
                 //token hop le
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(account, null, account.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
