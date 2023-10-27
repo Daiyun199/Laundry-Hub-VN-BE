@@ -22,29 +22,29 @@ public class ServiceController {
     @Autowired
     ResponseHandler responseHandler;
 
-    @GetMapping("{storeId}")
-    public ResponseEntity getAllService(@PathVariable long storeId){
-        return responseHandler.response(200,"Load All Services",servicesService.getServices(storeId));
+    @GetMapping()
+    public ResponseEntity getAllService(){
+        return responseHandler.response(200,"Load All Services",servicesService.getServices());
     }
 
 
-    @PostMapping("{storeId}")
+    @PostMapping()
     @PreAuthorize("hasAuthority('STORE') and authentication.principal.store.id.equals(#storeId)" )//authentication.principal.store.id.equals(#storeId)" : Chỉ được post trong chínhc store của mình
-    public ResponseEntity addService(@RequestBody Service service, @PathVariable long storeId){
-        return responseHandler.response(200,"Add successfully",servicesService.addService(service,storeId));
+    public ResponseEntity addService(@RequestBody Service service){
+        return responseHandler.response(200,"Add successfully",servicesService.addService(service));
     }
 
-    @DeleteMapping("/{StoreId}/{ServiceId}")
+    @DeleteMapping("{ServiceId}")
     @PreAuthorize("hasAuthority('STORE') and authentication.principal.store.id.equals(#storeId)")
-    public ResponseEntity deleteService(@PathVariable("StoreId") long StoreId,@PathVariable("ServiceId") long ServiceId){
-        servicesService.deleteService(StoreId,ServiceId);
+    public ResponseEntity deleteService(@PathVariable("ServiceId") long ServiceId){
+        servicesService.deleteService(ServiceId);
         return responseHandler.response(200,"Delete successfully",null);
     }
 
-    @PutMapping("/{StoreId}/{ServiceId}")
+    @PutMapping("{ServiceId}")
     @PreAuthorize("hasAuthority('STORE') and authentication.principal.store.id.equals(#storeId)")
-    public ResponseEntity updateService(@PathVariable("StoreId") long StoreId,@PathVariable("ServiceId") long ServiceId ,@RequestBody ServiceDTO request){
-        return responseHandler.response(200,"Update successfully",servicesService.updateService(StoreId,ServiceId,request));
+    public ResponseEntity updateService(@PathVariable("ServiceId") long ServiceId ,@RequestBody ServiceDTO request){
+        return responseHandler.response(200,"Update successfully",servicesService.updateService(ServiceId,request));
 
     }
 

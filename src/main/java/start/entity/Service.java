@@ -2,16 +2,10 @@ package start.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import start.enums.RoleEnum;
-import start.enums.StatusEnum;
+import start.enums.ServiceStatusEnum;
 import start.enums.TitleEnum;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -29,7 +23,7 @@ public class Service {
     private String description;
     private String figure;
     @Enumerated(EnumType.STRING)
-    private StatusEnum status;
+    private ServiceStatusEnum status;
     @Enumerated(EnumType.STRING)
     private TitleEnum title;
 

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import start.dto.request.OrderDTO;
 import start.entity.Account;
 import start.entity.Order;
+import start.enums.OrderStatusEnum;
 import start.service.OrderService;
 import start.utils.ResponseHandler;
 
@@ -28,15 +29,15 @@ public class OrderController {
 
 
 
-    @GetMapping("method = RequestMethod.GET")
-    public ResponseEntity getOrderOfCustomer(@RequestParam(value="customerId'")  long customerId){
+    @GetMapping()
+    public ResponseEntity getOrderOfCustomer(){
         
-        return responseHandler.response(200,"Orders of Customers are ",orderService.getOrdersOfCustomer(customerId));
+        return responseHandler.response(200,"Orders of Customers are ",orderService.getOrdersOfCustomer());
     }
 
-    @GetMapping("{StoreId}")
-    public ResponseEntity getOrdersOfStore(@PathVariable("StoreId") long storeId){
-        return responseHandler.response(200,"Orders of Store are",orderService.getOrdersOfStore(storeId));
+    @GetMapping()
+    public ResponseEntity getOrdersOfStore(){
+        return responseHandler.response(200,"Orders of Store are",orderService.getOrdersOfStore());
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
@@ -45,7 +46,10 @@ public class OrderController {
         return responseHandler.response(200,"Create Order Succesfully",orderService.addOrder(orderDTO));
     }
 
-
-
+    @PreAuthorize("hasAuthority('STORE')")
+    @PatchMapping("{OrderId}")
+    public ResponseEntity updateStatus(@PathVariable("OrderId") long orderId, OrderStatusEnum status){
+        return responseHandler.response(200,"Update status successfully",orderService.UpdateStatus(orderId,status));
+    }
 
 }

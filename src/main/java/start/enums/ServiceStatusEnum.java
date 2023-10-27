@@ -1,6 +1,6 @@
 package start.enums;
 
-public enum StatusEnum {
+public enum ServiceStatusEnum {
     ACTIVE,
     DEACTIVE
 }
