@@ -29,9 +29,7 @@ public class OrderService {
         return orderRepository.findByCustomerId(customerId);
     }
 
-    public List<Order> getOrdersOfStore() {
-        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        long storeId = account.getStore().getId();
+    public List<Order> getOrdersOfStore(long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new BadRequest("This store doesn't exist"));
         return orderRepository.findByStoreId(storeId);
     }
@@ -66,6 +64,9 @@ public class OrderService {
             if(option.getService().getStatus() == ServiceStatusEnum.DEACTIVE){
                 throw new BadRequest("This option doesn't active");
             }
+            if (count == 0){
+                throw new BadRequest("Please choose at least one Wash Service");
+            }
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setPrice(option.getPrice());
             orderDetail.setOption(option);
@@ -84,6 +85,13 @@ public class OrderService {
     public Order UpdateStatus(long orderId, OrderStatusEnum status){
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("Can't not find this order"));
         order.setOrderStatus(status);
+        return orderRepository.save(order);
+    }
+    public Order RateOrder(long orderId,int rate){
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("Can't not find this order"));
+        if(order.getOrderStatus()!= OrderStatusEnum.DONE){
+            throw new  BadRequest("Can't rate this order because it isn't finished");
+        }
         return orderRepository.save(order);
     }
 

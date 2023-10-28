@@ -16,10 +16,12 @@ public class AuthenPath {
     }
 
     public boolean isAuthen(HttpServletRequest request){
-//        System.out.println(request.getMethod());
+        System.out.println(request.getMethod());
         if (
+//                request.getMethod().equals("GET")
                 request.getRequestURI().equals("/login")
-                || (request.getMethod().equals("GET") && !request.getRequestURI().equals("/api/v1/order"))
+                || request.getMethod().equals("GET") && !request.getRequestURI().equals("/api/v1/service")
+//                || (request.getMethod().equals("GET") && (!request.getRequestURI().equals("/api/v1/order") || !request.getRequestURI().equals("/api/v1/customer")))
                 || request.getRequestURI().equals("/signup"))
             return false;
         return true;

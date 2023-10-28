@@ -26,23 +26,23 @@ public class OptionController {
         return responseHandler.response(200,"Load all Option successfully",optionService.getAllOption(serviceId));
     }
 
-    @PostMapping("{ServiceId}")
-    @PreAuthorize("hasAuthority('STORE')")
-    public ResponseEntity addNewOption( Option option, @PathVariable("ServiceId") long serviceId){
-        return responseHandler.response(200,"Add Option Successfully",optionService.addOption(option,serviceId));
-    }
+//    @PostMapping("{ServiceId}")
+//    @PreAuthorize("hasAuthority('STORE')")
+//    public ResponseEntity addNewOption( Option option, @PathVariable("ServiceId") long serviceId){
+//        return responseHandler.response(200,"Add Option Successfully",optionService.addOption(option,serviceId));
+//    }
 
-    @DeleteMapping("{OptionId}/{ServiceId}")
+    @DeleteMapping("{OptionId}")
     @PreAuthorize("hasAuthority('STORE')")
-    public ResponseEntity deleteOption(@PathVariable("OptionId") long optionId, @PathVariable("ServiceId") long ServiceId){
-        optionService.deleteOption(optionId,ServiceId);
+    public ResponseEntity deleteOption(@PathVariable("OptionId") long optionId){
+        optionService.deleteOption(optionId);
         return responseHandler.response(200,"Delete Successfully",null);
     }
 
-    @PutMapping("{OptionId}/{ServiceId}")
+    @PutMapping("{OptionId}")
     @PreAuthorize("hasAuthority('STORE')")
-    public ResponseEntity updateOption(@PathVariable("OptionId") long optionId, @PathVariable("ServiceId") long ServiceId, OptionDTO option){
-        return responseHandler.response(200,"Update Successfully",optionService.updateOption(optionId,ServiceId,option));
+    public ResponseEntity updateOption(@PathVariable("OptionId") long optionId, OptionDTO option){
+        return responseHandler.response(200,"Update Successfully",optionService.updateOption(optionId,option));
     }
 
 

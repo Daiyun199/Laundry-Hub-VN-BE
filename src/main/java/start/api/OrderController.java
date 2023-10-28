@@ -18,7 +18,9 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@SecurityRequirement(name = "api")
+@SecurityRequirement(name = "api")// Sử dụng yêu cầu này giúp
+// đảm bảo rằng chỉ các đối tượng được ủy quyền mới có thể truy cập
+// và sử dụng các API của hệ thống.
 @RequestMapping("api/v1/order")
 
 public class OrderController {
@@ -28,16 +30,16 @@ public class OrderController {
     ResponseHandler responseHandler;
 
 
-
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping()
     public ResponseEntity getOrderOfCustomer(){
         
         return responseHandler.response(200,"Orders of Customers are ",orderService.getOrdersOfCustomer());
     }
-
-    @GetMapping()
-    public ResponseEntity getOrdersOfStore(){
-        return responseHandler.response(200,"Orders of Store are",orderService.getOrdersOfStore());
+    @PreAuthorize("hasAuthority('STORE')")
+    @GetMapping("{StoreId}")
+    public ResponseEntity getOrdersOfStore(@PathVariable("{StoreId}") long StoreId){
+        return responseHandler.response(200,"Orders of Store are",orderService.getOrdersOfStore(StoreId));
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER')")

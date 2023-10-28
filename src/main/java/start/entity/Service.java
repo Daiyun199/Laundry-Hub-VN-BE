@@ -40,7 +40,7 @@ public class Service {
     @JsonIgnore
     private List<OrderDetail> orderDetails;
 
-    @OneToMany(mappedBy = "service")
+    @OneToMany(mappedBy = "service",cascade = CascadeType.ALL)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<Option> options;
 }
