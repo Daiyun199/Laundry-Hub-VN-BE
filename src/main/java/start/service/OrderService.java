@@ -4,7 +4,7 @@ package start.service;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import start.dto.request.OrderDTO;
+import start.dto.request.OrderCusDTO;
 import start.entity.*;
 import start.enums.OrderStatusEnum;
 import start.enums.ServiceStatusEnum;
@@ -22,19 +22,17 @@ public class OrderService {
     private final CustomerRepository customerRepository;
     private final StoreRepository storeRepository;
     private final OptionRepository optionRepository;
-
+    private final ServiceRepository serviceRepository;
     public List<Order> getOrdersOfCustomer() {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         long customerId =account.getCustomer().getId();
         return orderRepository.findByCustomerId(customerId);
     }
-
     public List<Order> getOrdersOfStore(long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new BadRequest("This store doesn't exist"));
         return orderRepository.findByStoreId(storeId);
     }
-
-    public Order addOrder(OrderDTO orderDTO) {
+    public Order addOrder(OrderCusDTO orderDTO) {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         float totalPrice = 0;
         int count = 0;
@@ -73,7 +71,11 @@ public class OrderService {
             orderDetail.setOrder(order);
             orderDetail.setService(option.getService());
             orderDetails.add(orderDetail);
-            totalPrice += option.getPrice();
+            if(option.getService().getTitle() == TitleEnum.WASH){
+                totalPrice += price(orderDTO.getNumberOfHeightCus(),option.getService());
+            }else{
+                totalPrice += option.getPrice();
+            }
             store = option.getService().getStore();
         }
         order.setStore(store);
@@ -87,6 +89,14 @@ public class OrderService {
         order.setOrderStatus(status);
         return orderRepository.save(order);
     }
+    public Order updateNumberOfHeight(long orderId, float NumberOfHeight){
+        start.entity.Service service = serviceRepository.findServiceByOrderIdAndTitle(orderId);
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("This order doesn't exist"));
+        order.setNumberOfHeightSto(NumberOfHeight);
+        order.setTotalPrice(price(NumberOfHeight,service));
+        return order;
+    }
+
     public Order RateOrder(long orderId,int rate){
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("Can't not find this order"));
         if(order.getOrderStatus()!= OrderStatusEnum.DONE){
@@ -94,6 +104,15 @@ public class OrderService {
         }
         return orderRepository.save(order);
     }
-
-
+    public float price(float numberOfHeightCus, start.entity.Service service){
+        float totalPrice =0;
+        if(numberOfHeightCus <5){
+            totalPrice= service.getOptions().get(0).getPrice()*numberOfHeightCus;
+        }else if(numberOfHeightCus>=5 && numberOfHeightCus<7){
+            totalPrice = service.getOptions().get(0).getPrice()*5 + (numberOfHeightCus-5)*service.getOptions().get(1).getPrice();
+        }else if(numberOfHeightCus >=7){
+            totalPrice = service.getOptions().get(0).getPrice()*5 + 2*service.getOptions().get(1).getPrice() + (numberOfHeightCus-7)*service.getOptions().get(2).getPrice();
+        }
+        return totalPrice;
+    }
 }

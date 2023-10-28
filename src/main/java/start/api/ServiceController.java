@@ -21,9 +21,9 @@ public class ServiceController {
     @Autowired
     ResponseHandler responseHandler;
 
-    @GetMapping()
-    public ResponseEntity getAllService(){
-        return responseHandler.response(200,"Load All Services",servicesService.getServices());
+    @GetMapping("{StoreId}")
+    public ResponseEntity getAllServiceOfStore(@PathVariable("StoreId") long storeId){
+        return responseHandler.response(200,"Load All Services",servicesService.getServices(storeId));
     }
 
 

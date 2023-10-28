@@ -25,9 +25,12 @@ public class Order {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
     private int rate;
+    @Enumerated(EnumType.STRING)
     private OrderStatusEnum orderStatus;
     private String address;
     private float totalPrice;
+    private float numberOfHeightCus;
+    private float numberOfHeightSto;
 
 
     @ManyToOne

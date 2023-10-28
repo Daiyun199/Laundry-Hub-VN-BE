@@ -23,9 +23,8 @@ public class ServicesService {
     private final StoreRepository storeRepository;
     private final OptionRepository optionRepository;
 
-    public final List<start.entity.Service> getServices(){
-        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        long storeId = account.getStore().getId();
+    public final List<start.entity.Service> getServices( long storeId){
+        Store store = storeRepository.findById(storeId).orElseThrow(() -> new BadRequest("This store doesn't exist"));
         return serviceRepository.findServicesByStoreId(storeId);
     }
     public start.entity.Service addService(ServiceAndOptionDTO serviceAndOptionDTO){

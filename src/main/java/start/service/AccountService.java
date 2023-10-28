@@ -14,6 +14,7 @@ import start.entity.Account;
 import start.entity.Customer;
 import start.entity.Store;
 import start.enums.RoleEnum;
+import start.enums.ServiceStatusEnum;
 import start.repository.CustomerRepository;
 import start.repository.StoreRepository;
 import start.repository.UserRepository;
@@ -34,9 +35,9 @@ public class AccountService {
     private PasswordEncoder passwordEncoder;
     public void addAccount(SignUpRequestDTO signUpData) {
         Account account = new Account();
+
         account.setUsername(signUpData.getUsername());
         account.setPassword(passwordEncoder.encode(signUpData.getPassword()));
-
         if (signUpData.getRole() == RoleEnum.CUSTOMER){
             account.setRole(RoleEnum.CUSTOMER);
             Customer cus = new Customer();
@@ -52,16 +53,16 @@ public class AccountService {
             Store store = new Store();
             store.setName(signUpData.getStore().getName());
             store.setAddress(signUpData.getStore().getAddress());
-            store.setStatus(signUpData.getStore().getStatus());
+            store.setStatus(ServiceStatusEnum.ACTIVE);
             store.setCoverPhoto(signUpData.getStore().getCoverPhoto());
             store.setPhoneNumber(signUpData.getStore().getPhoneNumber());
             store.setAccount(account);
             account.setStore(store);
             accountRepository.save(account);
+        } else if (signUpData.getRole() == RoleEnum.ADMIN){
+            account.setRole(RoleEnum.ADMIN);
+            accountRepository.save(account);
         }
-
-
-
     }
     public LoginResponse login(LoginRequestDTO loginRequestDTO){
         Authentication authentication = null;

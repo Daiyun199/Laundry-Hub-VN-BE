@@ -1,5 +1,6 @@
 package start.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -18,5 +19,9 @@ public class ApiHandleException {
     @ExceptionHandler(InternalAuthenticationServiceException.class)
     public ResponseEntity<?> InvalidAccount(InternalAuthenticationServiceException exception){
         return new ResponseEntity<String>("Invalid Account!!!", HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> DuplicateAccount(DataIntegrityViolationException exception){
+        return new ResponseEntity<String>("Duplicate Account!!!", HttpStatus.BAD_REQUEST);
     }
 }

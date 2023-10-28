@@ -12,7 +12,7 @@ import start.utils.ResponseHandler;
 
 @RequiredArgsConstructor
 @RestController
-@SecurityRequirement(name = "api")
+@SecurityRequirement(name = "api") //
 @RequestMapping("api/v1/option")
 public class OptionController {
     @Autowired

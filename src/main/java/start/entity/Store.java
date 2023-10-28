@@ -2,6 +2,7 @@ package start.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import start.enums.ServiceStatusEnum;
 
 import javax.persistence.*;
 import java.util.List;
@@ -17,7 +18,8 @@ public class Store {
     private String name;
     private String address;
     private String phoneNumber;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ServiceStatusEnum status;
     private String coverPhoto;
 
     @OneToOne
@@ -26,38 +28,17 @@ public class Store {
     private Account account;
 
     @OneToMany(mappedBy = "store")
+    @JsonIgnore
     private List<Order> orders;
 
     @OneToMany(mappedBy = "store")
+    @JsonIgnore
     private List<Service> services;
 
     public void setId(long id) {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setCoverPhoto(String coverPhoto) {
-        this.coverPhoto = coverPhoto;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
 
     public void setOrders(List<Order> orders) {
         this.orders = orders;

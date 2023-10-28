@@ -5,16 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import start.dto.request.OrderDTO;
-import start.entity.Account;
-import start.entity.Order;
+import start.dto.request.OrderCusDTO;
 import start.enums.OrderStatusEnum;
 import start.service.OrderService;
 import start.utils.ResponseHandler;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -44,7 +39,7 @@ public class OrderController {
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping()
-    public ResponseEntity addNewOrder(@RequestBody OrderDTO orderDTO){
+    public ResponseEntity addNewOrder(@RequestBody OrderCusDTO orderDTO){
         return responseHandler.response(200,"Create Order Succesfully",orderService.addOrder(orderDTO));
     }
 
@@ -53,5 +48,12 @@ public class OrderController {
     public ResponseEntity updateStatus(@PathVariable("OrderId") long orderId, OrderStatusEnum status){
         return responseHandler.response(200,"Update status successfully",orderService.UpdateStatus(orderId,status));
     }
+    @PreAuthorize("hasAuthority('STORE')" )
+    @PatchMapping("{OrderId}/123213")
+    public ResponseEntity updateNumberOfHeight(@PathVariable("OrderId") long orderId, float numberOfHeight){
+        return responseHandler.response(200,"Update Height successfully",orderService.updateNumberOfHeight(orderId,numberOfHeight));
+    }
+
+
 
 }

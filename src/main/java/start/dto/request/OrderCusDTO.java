@@ -3,9 +3,6 @@ package start.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import start.entity.Option;
-import start.entity.OrderDetail;
-import start.entity.Service;
 
 import java.util.List;
 
@@ -13,7 +10,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class OrderDTO {
+public class OrderCusDTO {
     private String address;
+    private float numberOfHeightCus;
+
     List<Long> optionIds;
 }
