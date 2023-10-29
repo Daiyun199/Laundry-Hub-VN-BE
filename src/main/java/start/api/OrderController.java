@@ -26,16 +26,22 @@ public class OrderController {
 
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    @GetMapping()
+    @GetMapping("Order-of-customer")
     public ResponseEntity getOrderOfCustomer(){
         
         return responseHandler.response(200,"Orders of Customers are ",orderService.getOrdersOfCustomer());
     }
     @PreAuthorize("hasAuthority('STORE')")
-    @GetMapping("{StoreId}")
-    public ResponseEntity getOrdersOfStore(@PathVariable("{StoreId}") long StoreId){
+    @GetMapping("all-order-in-store/{StoreId}")
+    public ResponseEntity getOrdersOfStore(@PathVariable("StoreId") long StoreId){
         return responseHandler.response(200,"Orders of Store are",orderService.getOrdersOfStore(StoreId));
     }
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    @GetMapping("admin-using")
+//    public ResponseEntity getAllOrder(){
+//        return  responseHandler.response(200,"This is all order",orderService.getAllOrder());
+//    }
+
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping()

@@ -23,7 +23,7 @@ public class Account implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    @Column(unique = true)
+    @Column(unique = true,columnDefinition = "nvarchar(max)")
     private String username;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;

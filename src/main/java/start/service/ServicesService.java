@@ -27,6 +27,10 @@ public class ServicesService {
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new BadRequest("This store doesn't exist"));
         return serviceRepository.findServicesByStoreId(storeId);
     }
+    public final List<start.entity.Service> getServicesOfStore(){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return getServices(account.getStore().getId());
+    }
     public start.entity.Service addService(ServiceAndOptionDTO serviceAndOptionDTO){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Store store = account.getStore();
@@ -42,6 +46,7 @@ public class ServicesService {
             newOption.setName(option.getName());
             newOption.setPrice(option.getPrice());
             newOption.setService(service);
+            newOption.setDefaultValue(option.isDefaultValue());
             options.add(newOption);
 
         }

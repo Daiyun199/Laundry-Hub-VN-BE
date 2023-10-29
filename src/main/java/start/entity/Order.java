@@ -27,10 +27,12 @@ public class Order {
     private int rate;
     @Enumerated(EnumType.STRING)
     private OrderStatusEnum orderStatus;
+    @Column(columnDefinition = "nvarchar(max)")
     private String address;
     private float totalPrice;
     private float numberOfHeightCus;
     private float numberOfHeightSto;
+    private String customerNumber;
 
 
     @ManyToOne

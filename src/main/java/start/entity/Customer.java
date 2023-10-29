@@ -21,9 +21,11 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id ;
+    @Column(columnDefinition = "nvarchar(max)")
     private String name;
     private String phoneNumber;
     private String avatar;
+    @Column(columnDefinition = "nvarchar(max)")
     private String address;
 
     @OneToOne
@@ -32,6 +34,7 @@ public class Customer {
     private Account account;
 
     @OneToMany(mappedBy = "customer")
+    @JsonIgnore
     private List<Order> orders;
 
     public void setId(long id) {

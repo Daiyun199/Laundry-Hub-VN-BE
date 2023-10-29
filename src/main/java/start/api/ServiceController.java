@@ -26,6 +26,11 @@ public class ServiceController {
         return responseHandler.response(200,"Load All Services",servicesService.getServices(storeId));
     }
 
+    @GetMapping()
+    public ResponseEntity getAllServiceOfStore(){
+        return responseHandler.response(200,"Load All Services",servicesService.getServicesOfStore());
+    }
+
 
     @PostMapping()
     @PreAuthorize("hasAuthority('STORE')" )//authentication.principal.store.id.equals(#storeId)" : Chỉ được post trong chínhc store của mình

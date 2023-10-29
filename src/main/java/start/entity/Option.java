@@ -23,8 +23,10 @@ public class Option {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id ;
+    @Column(columnDefinition = "nvarchar(max)")
     private String name;
     private float price;
+    private boolean isDefaultValue;
 
     @OneToMany(mappedBy = "option")
     @JsonIgnore

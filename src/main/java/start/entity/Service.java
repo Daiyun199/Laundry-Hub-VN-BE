@@ -19,7 +19,9 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
+    @Column(columnDefinition = "nvarchar(max)")
     private String name;
+    @Column(columnDefinition = "nvarchar(max)")
     private String description;
     private String figure;
     @Enumerated(EnumType.STRING)

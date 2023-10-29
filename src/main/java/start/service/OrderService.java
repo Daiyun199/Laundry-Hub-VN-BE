@@ -4,6 +4,7 @@ package start.service;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import start.dto.request.OrderAdminDTO;
 import start.dto.request.OrderCusDTO;
 import start.entity.*;
 import start.enums.OrderStatusEnum;
@@ -28,6 +29,9 @@ public class OrderService {
         long customerId =account.getCustomer().getId();
         return orderRepository.findByCustomerId(customerId);
     }
+//    public List<OrderAdminDTO> getAllOrder(){
+//        return orderRepository.findAllOrderWithCustomerAndStoreInformation();
+//    }
     public List<Order> getOrdersOfStore(long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new BadRequest("This store doesn't exist"));
         return orderRepository.findByStoreId(storeId);
@@ -43,8 +47,10 @@ public class OrderService {
         Customer customer = customerRepository.findById(account.getCustomer().getId()).orElseThrow(() -> new BadRequest("This customer doesn't exist"));
         order.setAddress(orderDTO.getAddress());
         order.setOrderStatus(OrderStatusEnum.CREATE_ORDER);
+        order.setCustomerNumber(orderDTO.getNumberOfCustomer());
         order.setRate(0);
         order.setCustomer(customer);
+        order.setNumberOfHeightCus(orderDTO.getNumberOfHeightCus());
         boolean hasDuplicates = orderDTO.getOptionIds().stream().distinct().count() < orderDTO.getOptionIds().size();
         if (hasDuplicates) throw new BadRequest("Only choose one option one time!");
         for (Long optionId : orderDTO.getOptionIds()) {

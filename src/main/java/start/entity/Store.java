@@ -15,7 +15,9 @@ public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(columnDefinition = "nvarchar(max)")
     private String name;
+    @Column(columnDefinition = "nvarchar(max)")
     private String address;
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
