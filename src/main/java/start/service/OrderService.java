@@ -29,9 +29,9 @@ public class OrderService {
         long customerId =account.getCustomer().getId();
         return orderRepository.findByCustomerId(customerId);
     }
-//    public List<OrderAdminDTO> getAllOrder(){
-//        return orderRepository.findAllOrderWithCustomerAndStoreInformation();
-//    }
+    public List<OrderAdminDTO> getAllOrder(){
+        return orderRepository.findAllOrderWithCustomerAndStoreInformation();
+    }
     public List<Order> getOrdersOfStore(long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new BadRequest("This store doesn't exist"));
         return orderRepository.findByStoreId(storeId);

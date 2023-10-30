@@ -12,7 +12,7 @@ public class OrderAdminDTO {
     private float numberOfHeightCus;
     private float numberOfHeightSto;
     private OrderStatusEnum orderStatus;
-    private int rate;
+    private float rate;
     private float totalPrice;
     private String customerNumber;
     private String customerName;

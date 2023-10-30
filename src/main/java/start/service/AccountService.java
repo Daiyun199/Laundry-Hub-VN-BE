@@ -53,7 +53,7 @@ public class AccountService {
             Store store = new Store();
             store.setName(signUpData.getStore().getName());
             store.setAddress(signUpData.getStore().getAddress());
-            store.setStatus(ServiceStatusEnum.ACTIVE);
+            store.setStatus(ServiceStatusEnum.DEACTIVE);
             store.setCoverPhoto(signUpData.getStore().getCoverPhoto());
             store.setPhoneNumber(signUpData.getStore().getPhoneNumber());
             store.setDescription(signUpData.getStore().getDescription());

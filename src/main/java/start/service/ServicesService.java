@@ -9,6 +9,7 @@ import start.entity.Account;
 import start.entity.Option;
 import start.entity.Store;
 import start.enums.ServiceStatusEnum;
+import start.enums.TitleEnum;
 import start.exception.exceptions.BadRequest;
 import start.repository.OptionRepository;
 import start.repository.ServiceRepository;
@@ -34,12 +35,22 @@ public class ServicesService {
     public start.entity.Service addService(ServiceAndOptionDTO serviceAndOptionDTO){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Store store = account.getStore();
+        int count = 0;
         start.entity.Service service = new start.entity.Service();
         service.setName(serviceAndOptionDTO.getName());
         service.setFigure(serviceAndOptionDTO.getFigure());
         service.setDescription(serviceAndOptionDTO.getDescription());
         service.setStatus(ServiceStatusEnum.ACTIVE);
         service.setTitle(serviceAndOptionDTO.getTitle());
+        for (start.entity.Service ser : store.getServices()){
+            if(ser.getTitle().equals(TitleEnum.WASH)){
+               count+=1;
+            }
+        }
+        if(count == 0){
+            service.setDefaultValue(serviceAndOptionDTO.isDefaultValue());
+        }
+
         List<Option> options = new ArrayList<>();
         for(Option option : serviceAndOptionDTO.getOptions()){
            Option newOption = new Option();

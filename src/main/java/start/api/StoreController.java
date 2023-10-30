@@ -23,4 +23,10 @@ public class StoreController {
     public ResponseEntity getAllStore(){
         return  responseHandler.response(200,"These are all store we having", storeService.getAllStore());
     }
+
+    @PutMapping
+    public ResponseEntity updateStatus(){
+        return responseHandler.response(200,"Your store active now ", storeService.updateStatus());
+
+    }
 }

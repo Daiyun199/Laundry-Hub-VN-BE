@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import start.dto.request.CustomerDTO;
 import start.entity.Account;
 import start.entity.Customer;
+import start.enums.RoleEnum;
+import start.exception.exceptions.BadRequest;
 import start.repository.CustomerRepository;
 
 import java.util.List;
@@ -28,6 +30,15 @@ public class CustomerService {
     public Customer getCustomer(){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return account.getCustomer();
+    }
+
+    public List<Customer> getAllCustomer(){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(account.getRole().equals(RoleEnum.ADMIN)){
+           return customerRepository.findAll();
+        }else{
+            throw new BadRequest("You don't have permission to use this function");
+        }
     }
 
 }

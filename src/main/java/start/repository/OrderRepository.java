@@ -12,7 +12,7 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 
     public List<Order> findByStoreId(long StoreId);
 
-//    @Query("SELECT o.id, o.address,o.numberOfHeightCus , o.numberOfHeightSto, o.orderStatus,o.rate,o.totalPrice,o.customerNumber,c.name, s.name FROM Order o Join Customer c on o.customer.id = c.id join Store s on o.store.id = s.id")
-//    public List<OrderAdminDTO> findAllOrderWithCustomerAndStoreInformation();
+    @Query("SELECT o.id, o.address,o.numberOfHeightCus , o.numberOfHeightSto, o.orderStatus,o.rate,o.totalPrice,o.customerNumber,c.name, s.name FROM Order o Join Customer c on o.customer.id = c.id join Store s on o.store.id = s.id")
+    public List<OrderAdminDTO> findAllOrderWithCustomerAndStoreInformation();
 
 }

@@ -17,5 +17,6 @@ public class ServiceAndOptionDTO {
     private String description;
     private TitleEnum title;
     private String figure;
+    private boolean isDefaultValue;
     List<Option> options;
 }

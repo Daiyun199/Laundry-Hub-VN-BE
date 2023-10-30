@@ -36,11 +36,11 @@ public class OrderController {
     public ResponseEntity getOrdersOfStore(@PathVariable("StoreId") long StoreId){
         return responseHandler.response(200,"Orders of Store are",orderService.getOrdersOfStore(StoreId));
     }
-//    @PreAuthorize("hasAuthority('ADMIN')")
-//    @GetMapping("admin-using")
-//    public ResponseEntity getAllOrder(){
-//        return  responseHandler.response(200,"This is all order",orderService.getAllOrder());
-//    }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("admin-using")
+    public ResponseEntity getAllOrder(){
+        return  responseHandler.response(200,"This is all order",orderService.getAllOrder());
+    }
 
 
     @PreAuthorize("hasAuthority('CUSTOMER')")

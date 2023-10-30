@@ -28,6 +28,7 @@ public class Service {
     private ServiceStatusEnum status;
     @Enumerated(EnumType.STRING)
     private TitleEnum title;
+    private boolean isDefaultValue;
 
 
 

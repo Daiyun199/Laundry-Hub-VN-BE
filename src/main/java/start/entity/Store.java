@@ -23,7 +23,7 @@ public class Store {
     @Enumerated(EnumType.STRING)
     private ServiceStatusEnum status;
     private String coverPhoto;
-    private int rate;
+    private float rate;
     @Column(columnDefinition = "nvarchar(max)")
     private String description;
     @OneToOne
@@ -35,7 +35,7 @@ public class Store {
     @JsonIgnore
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "store")
+    @OneToMany(mappedBy = "store",fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Service> services;
 
