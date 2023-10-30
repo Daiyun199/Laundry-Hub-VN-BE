@@ -32,6 +32,7 @@ public class Order {
     private float totalPrice;
     private float numberOfHeightCus;
     private float numberOfHeightSto;
+    private float totalPriceStoUp;
     private String customerNumber;
 
 

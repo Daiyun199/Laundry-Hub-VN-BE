@@ -86,6 +86,7 @@ public class OrderService {
         }
         order.setStore(store);
         order.setTotalPrice(totalPrice);
+        order.setTotalPriceStoUp(totalPrice);
         order.setOrderDetail(orderDetails);
         return orderRepository.save(order);
     }
@@ -99,7 +100,7 @@ public class OrderService {
         start.entity.Service service = serviceRepository.findServiceByOrderIdAndTitle(orderId);
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("This order doesn't exist"));
         order.setNumberOfHeightSto(NumberOfHeight);
-        order.setTotalPrice(price(NumberOfHeight,service));
+        order.setTotalPriceStoUp(price(NumberOfHeight,service));
         return order;
     }
 

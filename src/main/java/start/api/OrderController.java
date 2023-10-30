@@ -31,7 +31,7 @@ public class OrderController {
         
         return responseHandler.response(200,"Orders of Customers are ",orderService.getOrdersOfCustomer());
     }
-    @PreAuthorize("hasAuthority('STORE')")
+    @PreAuthorize("hasAuthority('STORE') && authentication.principal.store.id.equals(#StoreId)" )
     @GetMapping("all-order-in-store/{StoreId}")
     public ResponseEntity getOrdersOfStore(@PathVariable("StoreId") long StoreId){
         return responseHandler.response(200,"Orders of Store are",orderService.getOrdersOfStore(StoreId));
@@ -55,7 +55,7 @@ public class OrderController {
         return responseHandler.response(200,"Update status successfully",orderService.UpdateStatus(orderId,status));
     }
     @PreAuthorize("hasAuthority('STORE')" )
-    @PatchMapping("{OrderId}/123213")
+    @PutMapping("{OrderId}/123213")
     public ResponseEntity updateNumberOfHeight(@PathVariable("OrderId") long orderId, float numberOfHeight){
         return responseHandler.response(200,"Update Height successfully",orderService.updateNumberOfHeight(orderId,numberOfHeight));
     }

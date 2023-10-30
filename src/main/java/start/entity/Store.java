@@ -23,7 +23,9 @@ public class Store {
     @Enumerated(EnumType.STRING)
     private ServiceStatusEnum status;
     private String coverPhoto;
-
+    private int rate;
+    @Column(columnDefinition = "nvarchar(max)")
+    private String description;
     @OneToOne
     @JoinColumn(name="account_id")
     @JsonIgnore

@@ -12,6 +12,7 @@ public interface ServiceRepository extends JpaRepository<Service,Long> {
     public Service findServiceByOptionsId(long optionId);
 
 //    @Query( "select s from Order  o join OrderDetail od on o.id = od.order.id join Service s on od.service.id = s.id where s.title = 'WASH' and o.id like %?1% ")
-    @Query("SELECT s FROM Service s JOIN OrderDetail od JOIN Order o WHERE o.id = ?1 and s.title = 'WASH'")
+//    @Query("SELECT s FROM Service s JOIN OrderDetail od JOIN Order o WHERE o.id = ?1 and s.title = 'WASH'")
+    @Query( "select s from Order  o join OrderDetail od on o.id = od.order.id join Service s on od.service.id = s.id where s.title = 'WASH' and o.id = ?1 ")
     public Service findServiceByOrderIdAndTitle(Long orderId);
 }

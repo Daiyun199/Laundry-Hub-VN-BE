@@ -56,6 +56,7 @@ public class AccountService {
             store.setStatus(ServiceStatusEnum.ACTIVE);
             store.setCoverPhoto(signUpData.getStore().getCoverPhoto());
             store.setPhoneNumber(signUpData.getStore().getPhoneNumber());
+            store.setDescription(signUpData.getStore().getDescription());
             store.setAccount(account);
             account.setStore(store);
             accountRepository.save(account);
