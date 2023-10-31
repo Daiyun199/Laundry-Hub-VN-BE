@@ -40,4 +40,11 @@ public class CustomerController {
         return responseHandler.response(200, "This is all customer", customerService.getAllCustomer());
     }
 
+    @GetMapping("/count-customer")
+    private ResponseEntity countCustomer(){
+        return responseHandler.response(200,"",customerService.countCustomer());
+    }
+
+
+
 }

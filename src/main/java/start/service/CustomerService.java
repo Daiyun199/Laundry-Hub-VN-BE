@@ -41,6 +41,7 @@ public class CustomerService {
             throw new BadRequest("You don't have permission to use this function");
         }
     }
-
-
+    public int countCustomer(){
+        return customerRepository.findAll().size();
+    }
 }

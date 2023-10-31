@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import start.entity.Account;
 import start.entity.Order;
 import start.entity.Store;
+import start.enums.RoleEnum;
 import start.enums.StatusEnum;
 import start.enums.TitleEnum;
 import start.exception.exceptions.BadRequest;
@@ -58,4 +59,7 @@ public class StoreService {
         storeRepository.save(store);
     }
 
+    public int countStore(){
+        return storeRepository.findAll().size();
+    }
 }

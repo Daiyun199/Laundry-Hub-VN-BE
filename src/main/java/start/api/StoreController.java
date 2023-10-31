@@ -30,6 +30,10 @@ public class StoreController {
 
     }
 
+    @GetMapping("count-store")
+    public ResponseEntity countStore(){
+        return responseHandler.response(200,"",storeService.countStore());
+    }
 
 
 }
