@@ -7,6 +7,7 @@ import start.dto.request.CustomerDTO;
 import start.entity.Account;
 import start.entity.Customer;
 import start.enums.RoleEnum;
+import start.enums.StatusEnum;
 import start.exception.exceptions.BadRequest;
 import start.repository.CustomerRepository;
 
@@ -40,5 +41,6 @@ public class CustomerService {
             throw new BadRequest("You don't have permission to use this function");
         }
     }
+
 
 }

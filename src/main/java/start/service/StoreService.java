@@ -6,8 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import start.entity.Account;
 import start.entity.Store;
-import start.enums.RoleEnum;
-import start.enums.ServiceStatusEnum;
+import start.enums.StatusEnum;
 import start.enums.TitleEnum;
 import start.exception.exceptions.BadRequest;
 import start.repository.StoreRepository;
@@ -41,7 +40,7 @@ public class StoreService {
             }
         }
         if(!((countWash == 0 && countOption == 0) || (countWash == 1 && countOption == 0) || (countWash == 0 && countOption == 1))){
-            store.setStatus(ServiceStatusEnum.ACTIVE);
+            store.setStatus(StatusEnum.ACTIVE);
         }else{
           throw new BadRequest("Please choose at least one WASH SERVICE AND OPTION SERVICE before Change your store's status");
         }

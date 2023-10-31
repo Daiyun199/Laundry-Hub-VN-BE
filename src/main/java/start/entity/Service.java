@@ -2,7 +2,7 @@ package start.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import start.enums.ServiceStatusEnum;
+import start.enums.StatusEnum;
 import start.enums.TitleEnum;
 
 import javax.persistence.*;
@@ -25,7 +25,7 @@ public class Service {
     private String description;
     private String figure;
     @Enumerated(EnumType.STRING)
-    private ServiceStatusEnum status;
+    private StatusEnum status;
     @Enumerated(EnumType.STRING)
     private TitleEnum title;
     private boolean isDefaultValue;

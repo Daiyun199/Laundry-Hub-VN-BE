@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import start.enums.RoleEnum;
+import start.enums.StatusEnum;
 
 
 import javax.persistence.*;
@@ -27,6 +28,8 @@ public class Customer {
     private String avatar;
     @Column(columnDefinition = "nvarchar(max)")
     private String address;
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
 
     @OneToOne
     @JoinColumn(name="account_id")

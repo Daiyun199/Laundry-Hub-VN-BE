@@ -8,7 +8,7 @@ import start.dto.request.OrderAdminDTO;
 import start.dto.request.OrderCusDTO;
 import start.entity.*;
 import start.enums.OrderStatusEnum;
-import start.enums.ServiceStatusEnum;
+import start.enums.StatusEnum;
 import start.enums.TitleEnum;
 import start.exception.exceptions.BadRequest;
 import start.repository.*;
@@ -65,7 +65,7 @@ public class OrderService {
             if(store!=null && option.getService().getStore()!=store){
                 throw new BadRequest("Only choose options in the same store");
             }
-            if(option.getService().getStatus() == ServiceStatusEnum.DEACTIVE){
+            if(option.getService().getStatus() == StatusEnum.DEACTIVE){
                 throw new BadRequest("This option doesn't active");
             }
             if (count == 0){

@@ -36,7 +36,8 @@ public class CustomerController {
 
 
     @GetMapping("/admin-function/all-customer")
-    private ResponseEntity getAllCustomer(){
-        return responseHandler.response(200, "This is all customer",customerService.getAllCustomer());
+    private ResponseEntity getAllCustomer() {
+        return responseHandler.response(200, "This is all customer", customerService.getAllCustomer());
     }
+
 }

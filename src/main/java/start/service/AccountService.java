@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import start.dto.request.LoginRequestDTO;
@@ -14,7 +15,8 @@ import start.entity.Account;
 import start.entity.Customer;
 import start.entity.Store;
 import start.enums.RoleEnum;
-import start.enums.ServiceStatusEnum;
+import start.enums.StatusEnum;
+import start.exception.exceptions.BadRequest;
 import start.repository.CustomerRepository;
 import start.repository.StoreRepository;
 import start.repository.UserRepository;
@@ -46,6 +48,7 @@ public class AccountService {
             cus.setAddress(signUpData.getCustomer().getAddress());
             cus.setAvatar(signUpData.getCustomer().getAvatar());
             cus.setAccount(account);
+            cus.setStatus(StatusEnum.ACTIVE);
             account.setCustomer(cus);
             accountRepository.save(account);
         } else if (signUpData.getRole() == RoleEnum.STORE){
@@ -53,7 +56,7 @@ public class AccountService {
             Store store = new Store();
             store.setName(signUpData.getStore().getName());
             store.setAddress(signUpData.getStore().getAddress());
-            store.setStatus(ServiceStatusEnum.DEACTIVE);
+            store.setStatus(StatusEnum.DEACTIVE);
             store.setCoverPhoto(signUpData.getStore().getCoverPhoto());
             store.setPhoneNumber(signUpData.getStore().getPhoneNumber());
             store.setDescription(signUpData.getStore().getDescription());
@@ -87,5 +90,21 @@ public class AccountService {
             loginResponse.setStore(account.getStore());
         }
         return loginResponse;
+    }
+    public void deactiveAccount(long accountId){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account acc = accountRepository.findById(accountId).orElseThrow(() -> new BadRequest("This account doesn't exist"));
+        if(account.getRole().equals(RoleEnum.ADMIN)){
+            if(acc.getRole().equals(RoleEnum.STORE)){
+                Store store = acc.getStore();
+                store.setStatus(StatusEnum.DEACTIVE);
+            }else if(acc.getRole().equals(RoleEnum.CUSTOMER)){
+                Customer cus = acc.getCustomer();
+                cus.setStatus(StatusEnum.DEACTIVE);
+            }
+        }else{
+            throw new BadRequest("You don't have permission to delete this account");
+        }
+        accountRepository.save(acc);
     }
 }

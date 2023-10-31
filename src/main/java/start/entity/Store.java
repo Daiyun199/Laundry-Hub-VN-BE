@@ -2,7 +2,7 @@ package start.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import start.enums.ServiceStatusEnum;
+import start.enums.StatusEnum;
 
 import javax.persistence.*;
 import java.util.List;
@@ -21,7 +21,7 @@ public class Store {
     private String address;
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
-    private ServiceStatusEnum status;
+    private StatusEnum status;
     private String coverPhoto;
     private float rate;
     @Column(columnDefinition = "nvarchar(max)")

@@ -8,7 +8,7 @@ import start.dto.request.ServiceDTO;
 import start.entity.Account;
 import start.entity.Option;
 import start.entity.Store;
-import start.enums.ServiceStatusEnum;
+import start.enums.StatusEnum;
 import start.enums.TitleEnum;
 import start.exception.exceptions.BadRequest;
 import start.repository.OptionRepository;
@@ -40,7 +40,7 @@ public class ServicesService {
         service.setName(serviceAndOptionDTO.getName());
         service.setFigure(serviceAndOptionDTO.getFigure());
         service.setDescription(serviceAndOptionDTO.getDescription());
-        service.setStatus(ServiceStatusEnum.ACTIVE);
+        service.setStatus(StatusEnum.ACTIVE);
         service.setTitle(serviceAndOptionDTO.getTitle());
         for (start.entity.Service ser : store.getServices()){
             if(ser.getTitle().equals(TitleEnum.WASH)){
@@ -71,7 +71,7 @@ public class ServicesService {
         long storeId = account.getStore().getId();
         start.entity.Service ser = serviceRepository.findById(serviceId).orElseThrow(()-> new BadRequest("Can't find this Service"));
         ser.setStore(account.getStore());
-        ser.setStatus(ServiceStatusEnum.DEACTIVE);
+        ser.setStatus(StatusEnum.DEACTIVE);
         serviceRepository.save(ser);
     }
     public start.entity.Service updateService(long ServiceId , ServiceDTO request){

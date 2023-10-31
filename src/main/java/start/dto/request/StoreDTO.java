@@ -2,7 +2,6 @@ package start.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import start.enums.ServiceStatusEnum;
 
 @AllArgsConstructor
 @NoArgsConstructor
