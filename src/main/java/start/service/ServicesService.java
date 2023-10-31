@@ -48,7 +48,7 @@ public class ServicesService {
             }
         }
         if(count == 0){
-            service.setDefaultValue(serviceAndOptionDTO.isDefaultValue());
+            service.setDefaultValue(true);
         }
 
         List<Option> options = new ArrayList<>();

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import start.entity.Account;
+import start.entity.Order;
 import start.entity.Store;
 import start.enums.StatusEnum;
 import start.enums.TitleEnum;
@@ -47,6 +48,14 @@ public class StoreService {
         storeRepository.save(store);
         return store;
     }
-
+    public void RateStore(long orderId){
+      Store store =   storeRepository.findStoreByOrdersId(orderId);
+        float rate =0;
+        for(Order order :  store.getOrders()){
+            rate +=order.getRate();
+        }
+        store.setRate(rate/store.getOrders().size());
+        storeRepository.save(store);
+    }
 
 }

@@ -30,7 +30,23 @@ public class OrderService {
         return orderRepository.findByCustomerId(customerId);
     }
     public List<OrderAdminDTO> getAllOrder(){
-        return orderRepository.findAllOrderWithCustomerAndStoreInformation();
+        List<OrderAdminDTO> orderAdmin = new ArrayList<>();
+        List<Order> orders = orderRepository.findAllOrderWithCustomerAndStoreInformation();
+        for(Order order : orders){
+            OrderAdminDTO orderDTO = new OrderAdminDTO();
+            orderDTO.setId(order.getId());
+            orderDTO.setAddress(order.getAddress());
+            orderDTO.setNumberOfHeightSto(order.getNumberOfHeightSto());
+            orderDTO.setOrderStatus(order.getOrderStatus());
+            orderDTO.setRate(order.getRate());
+            orderDTO.setTotalPrice(order.getTotalPriceStoUp());
+            orderDTO.setCustomerNumber(orderDTO.getCustomerNumber());
+            orderDTO.setCustomerName(order.getCustomer().getName());
+            orderDTO.setStoreName(order.getStore().getName());
+            orderDTO.setOrderDetails(order.getOrderDetail());
+            orderAdmin.add(orderDTO);
+        }
+       return orderAdmin;
     }
     public List<Order> getOrdersOfStore(long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new BadRequest("This store doesn't exist"));
@@ -93,7 +109,11 @@ public class OrderService {
 
     public Order UpdateStatus(long orderId, OrderStatusEnum status){
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("Can't not find this order"));
-        order.setOrderStatus(status);
+        if(order.getOrderStatus().equals(OrderStatusEnum.STORE_REJECT)|| order.getOrderStatus().equals(OrderStatusEnum.DONE)){
+            throw new BadRequest("You can't change this order");
+        }else{
+            order.setOrderStatus(status);
+        }
         return orderRepository.save(order);
     }
     public Order updateNumberOfHeight(long orderId, float NumberOfHeight){
@@ -104,10 +124,20 @@ public class OrderService {
         return order;
     }
 
-    public Order RateOrder(long orderId,int rate){
+    public Order RateOrder(long orderId,float rate){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer cus = account.getCustomer();
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("Can't not find this order"));
-        if(order.getOrderStatus()!= OrderStatusEnum.DONE){
-            throw new  BadRequest("Can't rate this order because it isn't finished");
+        int count =0;
+        for(Order order1 : account.getCustomer().getOrders()){
+            if(order1.getId() == order.getId()){
+                count +=1;
+            }
+        }
+        if(order.getOrderStatus()!= OrderStatusEnum.DONE || count == 1){
+            throw new  BadRequest("Can't rate this order because it isn't finished or it isn't yours");
+        } else{
+            order.setRate(rate);
         }
         return orderRepository.save(order);
     }
@@ -122,4 +152,8 @@ public class OrderService {
         }
         return totalPrice;
     }
+
+
+
+
 }

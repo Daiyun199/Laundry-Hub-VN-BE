@@ -1,15 +1,18 @@
 package start.dto.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import start.entity.Option;
+import start.entity.OrderDetail;
+import start.entity.Service;
 import start.enums.OrderStatusEnum;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 public class OrderAdminDTO {
     private long id;
     private String address;
-    private float numberOfHeightCus;
     private float numberOfHeightSto;
     private OrderStatusEnum orderStatus;
     private float rate;
@@ -17,5 +20,6 @@ public class OrderAdminDTO {
     private String customerNumber;
     private String customerName;
     private String storeName;
+    private List<OrderDetail> orderDetails;
 
 }

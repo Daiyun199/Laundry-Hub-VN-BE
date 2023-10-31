@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import start.dto.request.OrderCusDTO;
 import start.enums.OrderStatusEnum;
 import start.service.OrderService;
+import start.service.StoreService;
 import start.utils.ResponseHandler;
 
 @RequiredArgsConstructor
@@ -23,6 +24,9 @@ public class OrderController {
     private OrderService orderService ;
     @Autowired
     ResponseHandler responseHandler;
+
+    @Autowired
+    private StoreService storeService;
 
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
@@ -55,11 +59,18 @@ public class OrderController {
         return responseHandler.response(200,"Update status successfully",orderService.UpdateStatus(orderId,status));
     }
     @PreAuthorize("hasAuthority('STORE')" )
-    @PutMapping("{OrderId}/123213")
+    @PutMapping("{OrderId}/update-number-of-height")
     public ResponseEntity updateNumberOfHeight(@PathVariable("OrderId") long orderId, float numberOfHeight){
         return responseHandler.response(200,"Update Height successfully",orderService.updateNumberOfHeight(orderId,numberOfHeight));
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER')" )
+    @PutMapping("{OrderId}/rate-order")
+    public ResponseEntity rateOrder(@PathVariable("OrderId") long orderId , float rate ){
+        orderService.RateOrder(orderId,rate);
+        storeService.RateStore(orderId);
+        return responseHandler.response(200,"Thank you for your review",null);
+    }
 
 
 }

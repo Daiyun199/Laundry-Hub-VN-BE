@@ -29,4 +29,7 @@ public class StoreController {
         return responseHandler.response(200,"Your store active now ", storeService.updateStatus());
 
     }
+
+
+
 }
