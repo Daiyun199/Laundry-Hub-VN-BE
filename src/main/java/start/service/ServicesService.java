@@ -54,12 +54,16 @@ public class ServicesService {
         List<Option> options = new ArrayList<>();
         for(Option option : serviceAndOptionDTO.getOptions()){
            Option newOption = new Option();
-            newOption.setName(option.getName());
-            newOption.setPrice(option.getPrice());
-            newOption.setService(service);
-            newOption.setDefaultValue(option.isDefaultValue());
-            options.add(newOption);
-
+           if(option.getPrice()>0){
+               newOption.setName(option.getName());
+               newOption.setPrice(option.getPrice());
+               newOption.setService(service);
+               newOption.setDefaultValue(option.isDefaultValue());
+               options.add(newOption);
+           }
+           else{
+               throw new BadRequest("You cannot let the price go negative");
+           }
         }
         service.setStore(store);
         service.setOptions(options);

@@ -7,6 +7,7 @@ import start.entity.Service;
 import start.enums.OrderStatusEnum;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -20,6 +21,7 @@ public class OrderAdminDTO {
     private String customerNumber;
     private String customerName;
     private String storeName;
+    private String DayCreateOrder;
     private List<OrderDetail> orderDetails;
 
 }

@@ -13,7 +13,9 @@ import start.enums.TitleEnum;
 import start.exception.exceptions.BadRequest;
 import start.repository.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -44,6 +46,7 @@ public class OrderService {
             orderDTO.setCustomerName(order.getCustomer().getName());
             orderDTO.setStoreName(order.getStore().getName());
             orderDTO.setOrderDetails(order.getOrderDetail());
+            orderDTO.setDayCreateOrder(order.getDayCreateOrder());
             orderAdmin.add(orderDTO);
         }
        return orderAdmin;
@@ -57,6 +60,9 @@ public class OrderService {
         float totalPrice = 0;
         int count = 0;
         int countOfStore =0;
+        Date today = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+        String formattedDate = dateFormat.format(today);
         Order order = new Order();
         List<OrderDetail> orderDetails = new ArrayList<>();
         Store store = null;
@@ -67,6 +73,7 @@ public class OrderService {
         order.setRate(0);
         order.setCustomer(customer);
         order.setNumberOfHeightCus(orderDTO.getNumberOfHeightCus());
+        order.setDayCreateOrder(formattedDate);
         boolean hasDuplicates = orderDTO.getOptionIds().stream().distinct().count() < orderDTO.getOptionIds().size();
         if (hasDuplicates) throw new BadRequest("Only choose one option one time!");
         for (Long optionId : orderDTO.getOptionIds()) {
@@ -152,8 +159,20 @@ public class OrderService {
         }
         return totalPrice;
     }
+    public int countOrderOnProcess(){
+        int count =0;
+        List<Order> orders = orderRepository.findAll();
+        for(Order order : orders){
+            if(!(order.getOrderStatus().equals(OrderStatusEnum.DONE) || order.getOrderStatus().equals(OrderStatusEnum.STORE_REJECT))){
+                count++;
+            }
+        }
+        return count ;
+    }
+    public Order getOrderbyId(long orderId) {
+//        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("This order doesn't exist"));
+        return order;
 
-
-
-
+    }
 }

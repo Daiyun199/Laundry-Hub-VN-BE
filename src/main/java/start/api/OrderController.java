@@ -71,6 +71,15 @@ public class OrderController {
         storeService.RateStore(orderId);
         return responseHandler.response(200,"Thank you for your review",null);
     }
+    @PreAuthorize("hasAuthority('ADMIN')" )
+    @GetMapping("count-order")
+    public ResponseEntity countOrderOnProcess(){
+        return responseHandler.response(200,"",orderService.countOrderOnProcess());
+    }
 
+    @GetMapping("{orderId}")
+    public ResponseEntity getOrderbyId(@PathVariable("orderId") long orderId){
+        return  responseHandler.response(200,"This is all information of order you want",orderService.getOrderbyId(orderId));
+    }
 
 }

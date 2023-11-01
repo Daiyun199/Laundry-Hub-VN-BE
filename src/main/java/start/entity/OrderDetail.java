@@ -23,7 +23,7 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name="service_id")
-    @JsonIgnore
+//    @JsonIgnore
     private Service service;
 
     @ManyToOne

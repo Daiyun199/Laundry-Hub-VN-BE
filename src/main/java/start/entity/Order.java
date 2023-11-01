@@ -11,6 +11,7 @@ import start.enums.RoleEnum;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -34,6 +35,7 @@ public class Order {
     private float numberOfHeightSto;
     private float totalPriceStoUp;
     private String customerNumber;
+    private String  DayCreateOrder;
 
 
     @ManyToOne
