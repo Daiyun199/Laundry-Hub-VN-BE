@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import start.enums.RoleEnum;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -22,12 +23,12 @@ public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-
+    @Size(max = 50 , min = 8)
     @Column(unique = true,columnDefinition = "nvarchar(max)")
     private String username;
+    @Size(min=8, max = 30)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
 

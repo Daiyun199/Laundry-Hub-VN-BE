@@ -50,12 +50,13 @@ public class StoreService {
         return store;
     }
     public void RateStore(long orderId){
-      Store store =   storeRepository.findStoreByOrdersId(orderId);
-        float rate =0;
+//        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Store store = storeRepository.findStoreByOrdersId(orderId);
+        float rate2 =0;
         for(Order order :  store.getOrders()){
-            rate +=order.getRate();
+            rate2 +=order.getRate();
         }
-        store.setRate(rate/store.getOrders().size());
+        store.setRate(rate2/store.getOrders().size());
         storeRepository.save(store);
     }
 

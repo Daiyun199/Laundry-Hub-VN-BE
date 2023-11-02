@@ -54,7 +54,7 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAuthority('STORE')")
-    @PatchMapping("{OrderId}")
+    @PatchMapping("{OrderId}/update-status")
     public ResponseEntity updateStatus(@PathVariable("OrderId") long orderId, OrderStatusEnum status){
         return responseHandler.response(200,"Update status successfully",orderService.UpdateStatus(orderId,status));
     }

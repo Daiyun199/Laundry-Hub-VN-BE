@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import start.enums.RoleEnum;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,15 +24,14 @@ public class Option {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id ;
+    @Size(max = 50)
     @Column(columnDefinition = "nvarchar(max)")
     private String name;
     private float price;
     private boolean isDefaultValue;
-
     @OneToMany(mappedBy = "option")
     @JsonIgnore
     private List<OrderDetail> orderDetail;
-
     @ManyToOne
     @JoinColumn(name="service_id")
     @JsonIgnore

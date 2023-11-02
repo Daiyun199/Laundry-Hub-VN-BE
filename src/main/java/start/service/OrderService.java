@@ -135,13 +135,17 @@ public class OrderService {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer cus = account.getCustomer();
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("Can't not find this order"));
-        int count =0;
-        for(Order order1 : account.getCustomer().getOrders()){
-            if(order1.getId() == order.getId()){
-                count +=1;
-            }
-        }
-        if(order.getOrderStatus()!= OrderStatusEnum.DONE || count == 1){
+        Customer cus2 = customerRepository.findCustomerByOrdersId(orderId);
+//        int count =0;
+//        for(Order order1 : orders){
+//            if(order1.getId() == order.getId()){
+//                count +=1;
+//            }
+//        }
+
+        // đây là check xem order được nhập vào có phải của người đang đăng nhập hay không
+
+        if(order.getOrderStatus()!= OrderStatusEnum.DONE || cus.getId() != cus2.getId()){
             throw new  BadRequest("Can't rate this order because it isn't finished or it isn't yours");
         } else{
             order.setRate(rate);

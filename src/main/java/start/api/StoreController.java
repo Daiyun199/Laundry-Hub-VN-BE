@@ -35,5 +35,10 @@ public class StoreController {
         return responseHandler.response(200,"",storeService.countStore());
     }
 
-
+//    @PutMapping("rate-store")
+//    public ResponseEntity rateStore() {
+//            storeService.RateStore();
+//            return responseHandler.response(200,"", null);
+//
+//    }
 }

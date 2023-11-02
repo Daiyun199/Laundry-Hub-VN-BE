@@ -9,6 +9,8 @@ import start.enums.OrderStatusEnum;
 import start.enums.RoleEnum;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -25,6 +27,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
+    @DecimalMin(value = "0.00", inclusive = false)
+    @DecimalMax(value = "5.00", inclusive = false)
     private float rate;
     @Enumerated(EnumType.STRING)
     private OrderStatusEnum orderStatus;

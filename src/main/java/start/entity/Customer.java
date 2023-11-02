@@ -9,6 +9,7 @@ import start.enums.StatusEnum;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,8 +23,10 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id ;
+    @Size(min = 4 , max = 50)
     @Column(columnDefinition = "nvarchar(max)")
     private String name;
+    @Size(min = 9 ,max =11)
     private String phoneNumber;
     private String avatar;
     @Column(columnDefinition = "nvarchar(max)")
