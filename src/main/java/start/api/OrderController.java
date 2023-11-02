@@ -35,10 +35,10 @@ public class OrderController {
         
         return responseHandler.response(200,"Orders of Customers are ",orderService.getOrdersOfCustomer());
     }
-    @PreAuthorize("hasAuthority('STORE') && authentication.principal.store.id.equals(#StoreId)" )
-    @GetMapping("all-order-in-store/{StoreId}")
-    public ResponseEntity getOrdersOfStore(@PathVariable("StoreId") long StoreId){
-        return responseHandler.response(200,"Orders of Store are",orderService.getOrdersOfStore(StoreId));
+    @PreAuthorize("hasAuthority('STORE') " )
+    @GetMapping("all-order-in-store")
+    public ResponseEntity getOrdersOfStore( ){
+        return responseHandler.response(200,"Orders of Store are",orderService.getOrdersOfStore());
     }
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("admin-using")

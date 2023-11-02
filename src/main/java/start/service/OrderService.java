@@ -51,9 +51,26 @@ public class OrderService {
         }
        return orderAdmin;
     }
-    public List<Order> getOrdersOfStore(long storeId) {
-        Store store = storeRepository.findById(storeId).orElseThrow(() -> new BadRequest("This store doesn't exist"));
-        return orderRepository.findByStoreId(storeId);
+    public List<OrderAdminDTO> getOrdersOfStore() {
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Store store = account.getStore();
+        List<OrderAdminDTO> orderAdmin = new ArrayList<>();
+        List<Order> orders = orderRepository.findByStoreId(store.getId());
+        for(Order order : orders){
+            OrderAdminDTO orderDTO = new OrderAdminDTO();
+            orderDTO.setId(order.getId());
+            orderDTO.setAddress(order.getAddress());
+            orderDTO.setNumberOfHeightSto(order.getNumberOfHeightSto());
+            orderDTO.setOrderStatus(order.getOrderStatus());
+            orderDTO.setRate(order.getRate());
+            orderDTO.setTotalPrice(order.getTotalPriceStoUp());
+            orderDTO.setCustomerNumber(orderDTO.getCustomerNumber());
+            orderDTO.setCustomerName(order.getCustomer().getName());
+            orderDTO.setOrderDetails(order.getOrderDetail());
+            orderDTO.setDayCreateOrder(order.getDayCreateOrder());
+            orderAdmin.add(orderDTO);
+        }
+        return orderAdmin;
     }
     public Order addOrder(OrderCusDTO orderDTO) {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
