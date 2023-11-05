@@ -26,7 +26,6 @@ public class Account implements UserDetails {
     @Size(max = 50 , min = 8)
     @Column(unique = true,columnDefinition = "nvarchar(max)")
     private String username;
-    @Size(min=8, max = 30)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @Enumerated(EnumType.STRING)

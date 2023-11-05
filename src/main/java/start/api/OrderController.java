@@ -77,9 +77,13 @@ public class OrderController {
         return responseHandler.response(200,"",orderService.countOrderOnProcess());
     }
 
-    @GetMapping("{orderId}")
+    @GetMapping("all-order-in-store/{orderId}")
     public ResponseEntity getOrderbyId(@PathVariable("orderId") long orderId){
-        return  responseHandler.response(200,"This is all information of order you want",orderService.getOrderbyId(orderId));
+        return  responseHandler.response(200,"This is all information of order you want", orderService.getOrderbyId(orderId));
+    }
+    @GetMapping("view-by-customer/{orderId}")
+    public ResponseEntity viewOrderByCustomer(@PathVariable("orderId") long orderId){
+        return  responseHandler.response(200,"This is all information of order you want", orderService.viewOrderByCustomer(orderId));
     }
 
 }

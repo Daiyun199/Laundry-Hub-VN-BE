@@ -1,7 +1,6 @@
 package start.api;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +22,7 @@ public class TestController {
     private CustomerService customerService;
     @Autowired
     private AccountService accountService;
+
     @GetMapping("admin-only")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity getAdmin(){
@@ -40,12 +40,27 @@ public class TestController {
         return responseHandler.response(200," This is your information",customerService.getCustomer());
     }
 
-    @PutMapping("/{accountId}/deactive-account")
-    public ResponseEntity deactiveAccount(@PathVariable("accountId") long accountId ){
-        accountService.deactiveAccount(accountId);
-        return responseHandler.response(200, "This account is deactive now",null);
+    @PutMapping("/{customerId}/deactive-customer")
+    public ResponseEntity deactiveCustomer(@PathVariable("customerId") long customerId ){
+        accountService.deactiveCustomer(customerId);
+        return responseHandler.response(200, "This customer is deactive now",null);
+    }
+    @PutMapping("/{customerId}/active-customer")
+    public ResponseEntity activeCustomer(@PathVariable("customerId") long customerId ){
+        accountService.activeCustomer(customerId);
+        return responseHandler.response(200, "This customer is active now",null);
     }
 
+    @PutMapping("/{storeId}/deactive-store")
+    public ResponseEntity deactiveStore(@PathVariable("storeId") long storeId ){
+        accountService.deactiveStore(storeId);
+        return responseHandler.response(200, "This store is deactive now",null);
+    }
+    @PutMapping("/{storeId}/active-store")
+    public ResponseEntity activeStore(@PathVariable("storeId") long storeId ){
+        accountService.activeStore(storeId);
+        return responseHandler.response(200, "This store is active now",null);
+    }
 }
 
 

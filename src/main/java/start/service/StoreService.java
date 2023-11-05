@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import start.dto.request.StoreDTO;
 import start.entity.Account;
 import start.entity.Order;
 import start.entity.Store;
@@ -59,7 +60,16 @@ public class StoreService {
         store.setRate(rate2/store.getOrders().size());
         storeRepository.save(store);
     }
-
+    public Store updateStore(StoreDTO storeDTO){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Store store = account.getStore();
+        store.setName(storeDTO.getName());
+        store.setAddress(storeDTO.getAddress());
+        store.setPhoneNumber(storeDTO.getPhoneNumber());
+        store.setCoverPhoto(storeDTO.getCoverPhoto());
+        store.setDescription(storeDTO.getDescription());
+        return storeRepository.save(store);
+    }
     public int countStore(){
         return storeRepository.findAll().size();
     }

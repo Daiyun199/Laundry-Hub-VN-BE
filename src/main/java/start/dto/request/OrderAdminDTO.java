@@ -15,9 +15,11 @@ public class OrderAdminDTO {
     private long id;
     private String address;
     private float numberOfHeightSto;
+    private float numberOfHeightCus;
     private OrderStatusEnum orderStatus;
     private float rate;
     private float totalPrice;
+    private float totalPriceOfCus;
     private String customerNumber;
     private String customerName;
     private String storeName;

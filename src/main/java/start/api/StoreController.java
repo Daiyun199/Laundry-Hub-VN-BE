@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.web.bind.annotation.*;
+import start.dto.request.StoreDTO;
 import start.service.StoreService;
 import start.utils.ResponseHandler;
 
@@ -27,7 +28,6 @@ public class StoreController {
     @PutMapping
     public ResponseEntity updateStatus(){
         return responseHandler.response(200,"Your store active now ", storeService.updateStatus());
-
     }
 
     @GetMapping("count-store")
@@ -41,4 +41,9 @@ public class StoreController {
 //            return responseHandler.response(200,"", null);
 //
 //    }
+
+    @PutMapping("update-store")
+    public ResponseEntity updateStore(@RequestBody StoreDTO storeDTO){
+        return responseHandler.response(200,"Your store is updated",storeService.updateStore(storeDTO));
+    }
 }

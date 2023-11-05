@@ -93,21 +93,46 @@ public class AccountService {
         }
         return loginResponse;
     }
-    public void deactiveAccount(long accountId){
+    public void deactiveCustomer(long customerId){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Account acc = accountRepository.findById(accountId).orElseThrow(() -> new BadRequest("This account doesn't exist"));
+//        Account acc = accountRepository.findById(accountId).orElseThrow(() -> new BadRequest("This account doesn't exist"));
+        Customer cus = customerRepository.findById(customerId).orElseThrow(() -> new BadRequest("This customer doesn't exist"));
         if(account.getRole().equals(RoleEnum.ADMIN)){
-            if(acc.getRole().equals(RoleEnum.STORE)){
-                Store store = acc.getStore();
-                store.setStatus(StatusEnum.DEACTIVE);
-            }else if(acc.getRole().equals(RoleEnum.CUSTOMER)){
-                Customer cus = acc.getCustomer();
                 cus.setStatus(StatusEnum.DEACTIVE);
-            }
         }else{
             throw new BadRequest("You don't have permission to delete this account");
         }
-        accountRepository.save(acc);
+        customerRepository.save(cus);
+    }
+    public void activeCustomer(long customerId){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer cus = customerRepository.findById(customerId).orElseThrow(() -> new BadRequest("This customer doesn't exist"));
+        if(account.getRole().equals(RoleEnum.ADMIN)){
+            cus.setStatus(StatusEnum.ACTIVE);
+        }else{
+            throw new BadRequest("You don't have permission to delete this account");
+        }
+        customerRepository.save(cus);
+    }
+    public void deactiveStore(long StoreId){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Store store = storeRepository.findById(StoreId).orElseThrow(() -> new BadRequest("This store doesn't exist"));
+        if(account.getRole().equals(RoleEnum.ADMIN)){
+            store.setStatus(StatusEnum.DEACTIVE);
+        }else{
+            throw new BadRequest("You don't have permission to delete this account");
+        }
+       storeRepository.save(store);
+    }
+    public void activeStore(long StoreId){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Store store = storeRepository.findById(StoreId).orElseThrow(() -> new BadRequest("This store doesn't exist"));
+        if(account.getRole().equals(RoleEnum.ADMIN)){
+            store.setStatus(StatusEnum.ACTIVE);
+        }else{
+            throw new BadRequest("You don't have permission to delete this account");
+        }
+        storeRepository.save(store);
     }
 
 

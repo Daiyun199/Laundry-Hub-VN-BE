@@ -42,7 +42,9 @@ public class OrderService {
             orderDTO.setOrderStatus(order.getOrderStatus());
             orderDTO.setRate(order.getRate());
             orderDTO.setTotalPrice(order.getTotalPriceStoUp());
-            orderDTO.setCustomerNumber(orderDTO.getCustomerNumber());
+            orderDTO.setTotalPriceOfCus(order.getTotalPrice());
+            orderDTO.setNumberOfHeightCus(order.getNumberOfHeightCus());
+            orderDTO.setCustomerNumber(order.getCustomerNumber());
             orderDTO.setCustomerName(order.getCustomer().getName());
             orderDTO.setStoreName(order.getStore().getName());
             orderDTO.setOrderDetails(order.getOrderDetail());
@@ -63,8 +65,10 @@ public class OrderService {
             orderDTO.setNumberOfHeightSto(order.getNumberOfHeightSto());
             orderDTO.setOrderStatus(order.getOrderStatus());
             orderDTO.setRate(order.getRate());
+            orderDTO.setTotalPriceOfCus(order.getTotalPrice());
+            orderDTO.setNumberOfHeightCus(order.getNumberOfHeightCus());
             orderDTO.setTotalPrice(order.getTotalPriceStoUp());
-            orderDTO.setCustomerNumber(orderDTO.getCustomerNumber());
+            orderDTO.setCustomerNumber(order.getCustomerNumber());
             orderDTO.setCustomerName(order.getCustomer().getName());
             orderDTO.setOrderDetails(order.getOrderDetail());
             orderDTO.setDayCreateOrder(order.getDayCreateOrder());
@@ -91,6 +95,7 @@ public class OrderService {
         order.setCustomer(customer);
         order.setNumberOfHeightCus(orderDTO.getNumberOfHeightCus());
         order.setDayCreateOrder(formattedDate);
+        order.setNumberOfHeightSto(orderDTO.getNumberOfHeightCus());
         boolean hasDuplicates = orderDTO.getOptionIds().stream().distinct().count() < orderDTO.getOptionIds().size();
         if (hasDuplicates) throw new BadRequest("Only choose one option one time!");
         for (Long optionId : orderDTO.getOptionIds()) {
@@ -145,7 +150,8 @@ public class OrderService {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("This order doesn't exist"));
         order.setNumberOfHeightSto(NumberOfHeight);
         order.setTotalPriceStoUp(price(NumberOfHeight,service));
-        return order;
+
+        return orderRepository.save(order);
     }
 
     public Order RateOrder(long orderId,float rate){
@@ -191,9 +197,26 @@ public class OrderService {
         return count ;
     }
     public Order getOrderbyId(long orderId) {
-//        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Store store = account.getStore();
+        Store store2 = storeRepository.findStoreByOrdersId(orderId);
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("This Order doesn't exist"));
+        if (store.getId() == store2.getId()) {
+            return order;
+        } else {
+            throw new BadRequest("You don't have permission to view order");
+        }
+    }
+    //Customer xem lại order của mình
+    public Order viewOrderByCustomer(long orderId){
+        Account account= (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer cus = account.getCustomer();
+        Customer cus2 = customerRepository.findCustomerByOrdersId(orderId);
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("This order doesn't exist"));
-        return order;
-
+        if(cus.getId() == cus2.getId()){
+            return order;
+        }else {
+            throw new BadRequest("This order isn't your");
+        }
     }
 }

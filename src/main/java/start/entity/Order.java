@@ -27,9 +27,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
-    @DecimalMin(value = "0.00", inclusive = false)
-    @DecimalMax(value = "5.00", inclusive = false)
-    private float rate;
+    @DecimalMin(value = "-0.01", inclusive = false)
+    @DecimalMax(value = "5.01", inclusive = false)
+    private float rate = 0;
     @Enumerated(EnumType.STRING)
     private OrderStatusEnum orderStatus;
     @Column(columnDefinition = "nvarchar(max)")
