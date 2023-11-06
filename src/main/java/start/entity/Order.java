@@ -39,7 +39,8 @@ public class Order {
     private float numberOfHeightSto;
     private float totalPriceStoUp;
     private String customerNumber;
-    private String  DayCreateOrder;
+    private Date  DayCreateOrder;
+
 
 
     @ManyToOne

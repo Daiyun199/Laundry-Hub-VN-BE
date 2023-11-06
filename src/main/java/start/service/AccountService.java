@@ -22,6 +22,11 @@ import start.repository.StoreRepository;
 import start.repository.UserRepository;
 import start.utils.TokenHandler;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -42,6 +47,7 @@ public class AccountService {
 
         account.setUsername(signUpData.getUsername());
         account.setPassword(passwordEncoder.encode(signUpData.getPassword()));
+        account.setDateCreate(new Date());
         if (signUpData.getRole() == RoleEnum.CUSTOMER){
             account.setRole(RoleEnum.CUSTOMER);
             Customer cus = new Customer();
@@ -134,6 +140,52 @@ public class AccountService {
         }
         storeRepository.save(store);
     }
+//    public int getAccountList(){
+//
+//        Date today = new Date();
+//
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTime(today);
+//        calendar.set(,Calendar.DAY_OF_MONTH, 1); // Thiết lập ngày là 1 (ngày đầu tháng)
+//        Date startDate = calendar.getTime();
+//
+//        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH)); // Thiết lập ngày là cuối tháng
+//        Date endDate = calendar.getTime();
+//
+//        return accounts.size();
+//    }
 
+    public List<Integer> getRegisteredAccountsCountForMonthAndDay() {
 
+        List<Integer> countAccount = new ArrayList<>();
+        LocalDate currentDate = LocalDate.now();
+        YearMonth currentYearMonth = YearMonth.from(currentDate);
+        int year =currentYearMonth.getYear();
+        int month = currentYearMonth.getMonthValue();
+
+        if(month == 2){
+            List<Account> account2MonthAgo = accountRepository.findByCreatedAtMonthYear(year-1, 12);
+            countAccount.add(account2MonthAgo.size());
+            List<Account> accountLastMonth = accountRepository.findByCreatedAtMonthYear(year, month-1);
+            countAccount.add(accountLastMonth.size());
+            List<Account> accountNow = accountRepository.findByCreatedAtMonthYear(year, month);
+            countAccount.add(accountNow.size());
+        }else if(month == 1){
+            List<Account> account2MonthAgo = accountRepository.findByCreatedAtMonthYear(year-1, 11);
+            countAccount.add(account2MonthAgo.size());
+            List<Account> accountLastMonth = accountRepository.findByCreatedAtMonthYear(year-1, 12);
+            countAccount.add(accountLastMonth.size());
+            List<Account> accountNow = accountRepository.findByCreatedAtMonthYear(year, month);
+            countAccount.add(accountNow.size());
+        }else{
+            List<Account> account2MonthAgo = accountRepository.findByCreatedAtMonthYear(year, month-2);
+            countAccount.add(account2MonthAgo.size());
+            List<Account> accountLastMonth = accountRepository.findByCreatedAtMonthYear(year, month-1);
+            countAccount.add(accountLastMonth.size());
+            List<Account> accountNow = accountRepository.findByCreatedAtMonthYear(year, month);
+            countAccount.add(accountNow.size());
+        }
+
+        return countAccount;
+    }
 }

@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import start.service.AccountService;
 import start.service.CustomerService;
+import start.service.OrderService;
 import start.utils.ResponseHandler;
+
+import java.util.Date;
 
 @SecurityRequirement(name = "api")
 @RestController
@@ -22,6 +25,8 @@ public class TestController {
     private CustomerService customerService;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private OrderService orderService;
 
     @GetMapping("admin-only")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -61,6 +66,21 @@ public class TestController {
         accountService.activeStore(storeId);
         return responseHandler.response(200, "This store is active now",null);
     }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/revenue")
+    public ResponseEntity getRevenue(){
+
+        return responseHandler.response(200,"This is revenue of web",orderService.TotalPrice());
+    }
+//
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/registered")
+    public ResponseEntity countAccountInCount(){
+
+        return responseHandler.response(200,"This is revenue of web",accountService.getRegisteredAccountsCountForMonthAndDay());
+    }
+
 }
 
 

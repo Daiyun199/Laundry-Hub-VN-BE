@@ -54,10 +54,14 @@ public class StoreService {
 //        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Store store = storeRepository.findStoreByOrdersId(orderId);
         float rate2 =0;
+        int count =0;
         for(Order order :  store.getOrders()){
-            rate2 +=order.getRate();
+            if(order.getRate() > 0) {
+                rate2 += order.getRate();
+                count +=1;
+            }
         }
-        store.setRate(rate2/store.getOrders().size());
+        store.setRate(rate2/count);
         storeRepository.save(store);
     }
     public Store updateStore(StoreDTO storeDTO){

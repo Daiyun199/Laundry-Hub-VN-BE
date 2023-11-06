@@ -82,8 +82,6 @@ public class OrderService {
         int count = 0;
         int countOfStore =0;
         Date today = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-        String formattedDate = dateFormat.format(today);
         Order order = new Order();
         List<OrderDetail> orderDetails = new ArrayList<>();
         Store store = null;
@@ -94,7 +92,7 @@ public class OrderService {
         order.setRate(0);
         order.setCustomer(customer);
         order.setNumberOfHeightCus(orderDTO.getNumberOfHeightCus());
-        order.setDayCreateOrder(formattedDate);
+        order.setDayCreateOrder(today);
         order.setNumberOfHeightSto(orderDTO.getNumberOfHeightCus());
         boolean hasDuplicates = orderDTO.getOptionIds().stream().distinct().count() < orderDTO.getOptionIds().size();
         if (hasDuplicates) throw new BadRequest("Only choose one option one time!");
@@ -218,5 +216,15 @@ public class OrderService {
         }else {
             throw new BadRequest("This order isn't your");
         }
+    }
+    public double TotalPrice(){
+        double totalPrice =0;
+        List<Order> orders = orderRepository.findAll();
+        for(Order order : orders){
+            if(order.getOrderStatus().equals(OrderStatusEnum.DONE)){
+                totalPrice = order.getTotalPrice();
+            }
+        }
+        return totalPrice;
     }
 }

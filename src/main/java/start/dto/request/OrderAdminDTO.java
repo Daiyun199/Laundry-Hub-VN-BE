@@ -23,7 +23,7 @@ public class OrderAdminDTO {
     private String customerNumber;
     private String customerName;
     private String storeName;
-    private String DayCreateOrder;
+    private Date DayCreateOrder;
     private List<OrderDetail> orderDetails;
 
 }

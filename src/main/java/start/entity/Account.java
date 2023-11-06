@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -24,13 +25,13 @@ public class Account implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     @Size(max = 50 , min = 8)
-    @Column(unique = true,columnDefinition = "nvarchar(max)")
+    @Column(unique = true)
     private String username;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
-
+    private Date dateCreate;
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Customer customer;
