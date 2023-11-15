@@ -38,12 +38,19 @@ public class ServiceController {
         return responseHandler.response(200,"Add successfully",servicesService.addService(service));
     }
 
-    @DeleteMapping("{ServiceId}")
+    @PutMapping("deactive-service/{ServiceId}")
     @PreAuthorize("hasAuthority('STORE')")
     public ResponseEntity deleteService(@PathVariable("ServiceId") long ServiceId){
         servicesService.deleteService(ServiceId);
         return responseHandler.response(200,"This service Deactive now",null);
     }
+    @PutMapping("active-service/{ServiceId}")
+    @PreAuthorize("hasAuthority('STORE')")
+    public ResponseEntity activeService(@PathVariable("ServiceId") long ServiceId){
+        servicesService.activeService(ServiceId);
+        return responseHandler.response(200,"This service active now",null);
+    }
+
 
     @PutMapping("{ServiceId}")
     @PreAuthorize("hasAuthority('STORE')")

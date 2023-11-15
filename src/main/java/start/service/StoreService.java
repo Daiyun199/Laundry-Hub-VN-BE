@@ -33,19 +33,23 @@ public class StoreService {
     public Store updateStatus(){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Store store = account.getStore();
-        int countWash =0;
-        int countOption =0;
-        for (start.entity.Service ser : store.getServices()){
-            if(ser.getTitle().equals(TitleEnum.WASH)){
-                countWash+=1;
-            }else if(ser.getTitle().equals(TitleEnum.OPTION)){
-                countOption+=1;
+        if(store.getStatus() != StatusEnum.BLOCKED ){
+            int countWash =0;
+            int countOption =0;
+            for (start.entity.Service ser : store.getServices()){
+                if(ser.getTitle().equals(TitleEnum.WASH)){
+                    countWash+=1;
+                }else if(ser.getTitle().equals(TitleEnum.OPTION)){
+                    countOption+=1;
+                }
             }
-        }
-        if(!((countWash == 0 && countOption == 0) || (countWash == 1 && countOption == 0) || (countWash == 0 && countOption == 1))){
-            store.setStatus(StatusEnum.ACTIVE);
+            if(!((countWash == 0 && countOption == 0) || (countWash == 1 && countOption == 0) || (countWash == 0 && countOption == 1))){
+                store.setStatus(StatusEnum.ACTIVE);
+            }else{
+                throw new BadRequest("Please choose at least one WASH SERVICE AND OPTION SERVICE before Change your store's status");
+            }
         }else{
-          throw new BadRequest("Please choose at least one WASH SERVICE AND OPTION SERVICE before Change your store's status");
+            throw new BadRequest("Your store is blocked now, please contact admin to unblock your store");
         }
         storeRepository.save(store);
         return store;
@@ -73,6 +77,10 @@ public class StoreService {
         store.setCoverPhoto(storeDTO.getCoverPhoto());
         store.setDescription(storeDTO.getDescription());
         return storeRepository.save(store);
+    }
+    public Store getInformationStore(){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return account.getStore();
     }
     public int countStore(){
         return storeRepository.findAll().size();

@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import start.dto.request.OrderCusDTO;
 import start.enums.OrderStatusEnum;
+import start.exception.exceptions.BadRequest;
 import start.service.OrderService;
 import start.service.StoreService;
 import start.utils.ResponseHandler;
@@ -54,9 +55,12 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAuthority('STORE')")
-    @PatchMapping("{OrderId}/update-status")
-    public ResponseEntity updateStatus(@PathVariable("OrderId") long orderId, OrderStatusEnum status){
-        return responseHandler.response(200,"Update status successfully",orderService.UpdateStatus(orderId,status));
+    @PutMapping("{OrderId}/update-status")
+    public ResponseEntity updateStatus(@PathVariable("OrderId") long orderId, OrderStatusEnum status,@RequestParam(required = false) String feedback){
+        if(status != OrderStatusEnum.STORE_REJECT && feedback != null) {
+            throw new BadRequest("Feedback should only be provided for orders with status STORE_REJECT.");
+        }
+        return responseHandler.response(200,"Update status successfully",orderService.UpdateStatus(orderId,status,feedback));
     }
     @PreAuthorize("hasAuthority('STORE')" )
     @PutMapping("{OrderId}/update-number-of-height")
@@ -66,8 +70,8 @@ public class OrderController {
 
     @PreAuthorize("hasAuthority('CUSTOMER')" )
     @PutMapping("{OrderId}/rate-order")
-    public ResponseEntity rateOrder(@PathVariable("OrderId") long orderId , float rate ){
-        orderService.RateOrder(orderId,rate);
+    public ResponseEntity rateOrder(@PathVariable("OrderId") long orderId , float rate, String feedback ){
+        orderService.RateOrder(orderId,rate,feedback);
         storeService.RateStore(orderId);
         return responseHandler.response(200,"Thank you for your review",null);
     }

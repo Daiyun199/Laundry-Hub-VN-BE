@@ -16,6 +16,7 @@ import start.entity.Customer;
 import start.entity.Store;
 import start.enums.RoleEnum;
 import start.enums.StatusEnum;
+import start.enums.TitleEnum;
 import start.exception.exceptions.BadRequest;
 import start.repository.CustomerRepository;
 import start.repository.StoreRepository;
@@ -85,8 +86,6 @@ public class AccountService {
                             loginRequestDTO.getPassword()
                     )
             );
-
-
         Account account = accountRepository.findUserByUsername(((Account) authentication.getPrincipal()).getUsername());
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setUsername(account.getUsername());
@@ -94,6 +93,22 @@ public class AccountService {
         loginResponse.setToken(tokenHandler.generateToken(account));
         if(account.getRole() == RoleEnum.CUSTOMER){
            loginResponse.setCustomer(account.getCustomer());
+        }else if(account.getRole() == RoleEnum.STORE){
+            loginResponse.setStore(account.getStore());
+        }
+        return loginResponse;
+    }
+
+    public LoginResponse loginByEmail(String email){
+        Authentication authentication = null;
+        Account account = accountRepository.findUserByUsername(email);
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setId(account.getId());
+        loginResponse.setUsername(account.getUsername());
+        loginResponse.setRole(account.getRole());
+        loginResponse.setToken(tokenHandler.generateToken(account));
+        if(account.getRole() == RoleEnum.CUSTOMER){
+            loginResponse.setCustomer(account.getCustomer());
         }else if(account.getRole() == RoleEnum.STORE){
             loginResponse.setStore(account.getStore());
         }
@@ -120,21 +135,34 @@ public class AccountService {
         }
         customerRepository.save(cus);
     }
-    public void deactiveStore(long StoreId){
+    public void blockedStore(long StoreId){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Store store = storeRepository.findById(StoreId).orElseThrow(() -> new BadRequest("This store doesn't exist"));
         if(account.getRole().equals(RoleEnum.ADMIN)){
-            store.setStatus(StatusEnum.DEACTIVE);
+            store.setStatus(StatusEnum.BLOCKED);
         }else{
-            throw new BadRequest("You don't have permission to delete this account");
+            throw new BadRequest("You don't have permission to block this account");
         }
        storeRepository.save(store);
     }
     public void activeStore(long StoreId){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Store store = storeRepository.findById(StoreId).orElseThrow(() -> new BadRequest("This store doesn't exist"));
+        int countWash =0;
+        int countOption =0;
+        for (start.entity.Service ser : store.getServices()){
+            if(ser.getTitle().equals(TitleEnum.WASH)){
+                countWash+=1;
+            }else if(ser.getTitle().equals(TitleEnum.OPTION)){
+                countOption+=1;
+            }
+        }
         if(account.getRole().equals(RoleEnum.ADMIN)){
-            store.setStatus(StatusEnum.ACTIVE);
+            if(!((countWash == 0 && countOption == 0) || (countWash == 1 && countOption == 0) || (countWash == 0 && countOption == 1))){
+                store.setStatus(StatusEnum.ACTIVE);
+            }else{
+                throw new BadRequest("This store The store is not eligible to operate");
+            }
         }else{
             throw new BadRequest("You don't have permission to delete this account");
         }
@@ -156,13 +184,11 @@ public class AccountService {
 //    }
 
     public List<Integer> getRegisteredAccountsCountForMonthAndDay() {
-
         List<Integer> countAccount = new ArrayList<>();
         LocalDate currentDate = LocalDate.now();
         YearMonth currentYearMonth = YearMonth.from(currentDate);
         int year =currentYearMonth.getYear();
         int month = currentYearMonth.getMonthValue();
-
         if(month == 2){
             List<Account> account2MonthAgo = accountRepository.findByCreatedAtMonthYear(year-1, 12);
             countAccount.add(account2MonthAgo.size());
@@ -185,7 +211,6 @@ public class AccountService {
             List<Account> accountNow = accountRepository.findByCreatedAtMonthYear(year, month);
             countAccount.add(accountNow.size());
         }
-
         return countAccount;
     }
 }

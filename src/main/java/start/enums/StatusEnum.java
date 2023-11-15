@@ -2,5 +2,6 @@ package start.enums;
 
 public enum StatusEnum {
     ACTIVE,
-    DEACTIVE
+    DEACTIVE,
+    BLOCKED
 }

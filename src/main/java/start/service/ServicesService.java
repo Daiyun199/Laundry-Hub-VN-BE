@@ -35,61 +35,81 @@ public class ServicesService {
     public start.entity.Service addService(ServiceAndOptionDTO serviceAndOptionDTO){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Store store = account.getStore();
-        int count = 0;
-        start.entity.Service service = new start.entity.Service();
-        service.setName(serviceAndOptionDTO.getName());
-        service.setFigure(serviceAndOptionDTO.getFigure());
-        service.setDescription(serviceAndOptionDTO.getDescription());
-        service.setStatus(StatusEnum.ACTIVE);
-        service.setTitle(serviceAndOptionDTO.getTitle());
-        for (start.entity.Service ser : store.getServices()){
-            if(ser.getTitle().equals(TitleEnum.WASH)){
-               count+=1;
+        if(store.getStatus() != StatusEnum.BLOCKED){
+            int count = 0;
+            start.entity.Service service = new start.entity.Service();
+            service.setName(serviceAndOptionDTO.getName());
+            service.setFigure(serviceAndOptionDTO.getFigure());
+            service.setDescription(serviceAndOptionDTO.getDescription());
+            service.setStatus(StatusEnum.ACTIVE);
+            service.setTitle(serviceAndOptionDTO.getTitle());
+            for (start.entity.Service ser : store.getServices()){
+                if(ser.getTitle().equals(TitleEnum.WASH)){
+                    count+=1;
+                }
             }
-        }
-        if(count == 0){
-            service.setDefaultValue(true);
-        }
+            if(count == 0){
+                service.setDefaultValue(true);
+            }
 
-        List<Option> options = new ArrayList<>();
-        for(Option option : serviceAndOptionDTO.getOptions()){
-           Option newOption = new Option();
-           if(option.getPrice()>0){
-               newOption.setName(option.getName());
-               newOption.setPrice(option.getPrice());
-               newOption.setService(service);
-               newOption.setDefaultValue(option.isDefaultValue());
-               options.add(newOption);
-           }
-           else{
-               throw new BadRequest("You cannot let the price go negative");
-           }
+            List<Option> options = new ArrayList<>();
+            for(Option option : serviceAndOptionDTO.getOptions()){
+                Option newOption = new Option();
+                if(option.getPrice()>0){
+                    newOption.setName(option.getName());
+                    newOption.setPrice(option.getPrice());
+                    newOption.setService(service);
+                    newOption.setDefaultValue(option.isDefaultValue());
+                    options.add(newOption);
+                }
+                else{
+                    throw new BadRequest("You cannot let the price go negative");
+                }
+            }
+            service.setStore(store);
+            service.setOptions(options);
+            serviceRepository.save(service);
+            return service;
+        }else{
+            throw new BadRequest("Your store is blocked now, please contact to admin to unblock");
         }
-        service.setStore(store);
-        service.setOptions(options);
-        serviceRepository.save(service);
-        return service;
     }
     public void deleteService( long serviceId ){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        long storeId = account.getStore().getId();
-        start.entity.Service ser = serviceRepository.findById(serviceId).orElseThrow(()-> new BadRequest("Can't find this Service"));
-        ser.setStore(account.getStore());
-        ser.setStatus(StatusEnum.DEACTIVE);
-        serviceRepository.save(ser);
+        if(account.getStore().getStatus() != StatusEnum.BLOCKED){
+            start.entity.Service ser = serviceRepository.findById(serviceId).orElseThrow(()-> new BadRequest("Can't find this Service"));
+            ser.setStore(account.getStore());
+            ser.setStatus(StatusEnum.DEACTIVE);
+            serviceRepository.save(ser);
+        }else{
+            throw new BadRequest("Your store is blocked now, please contact to admin to unblock");
+        }
+    }
+    public void activeService( long serviceId ){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(account.getStore().getStatus() != StatusEnum.BLOCKED){
+            start.entity.Service ser = serviceRepository.findById(serviceId).orElseThrow(()-> new BadRequest("Can't find this Service"));
+            ser.setStore(account.getStore());
+            ser.setStatus(StatusEnum.ACTIVE);
+            serviceRepository.save(ser);
+        }else{
+            throw new BadRequest("Your store is blocked now, please contact to admin to unblock");
+        }
     }
     public start.entity.Service updateService(long ServiceId , ServiceDTO request){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        long storeId = account.getStore().getId();
-        start.entity.Service ser = serviceRepository.findById(ServiceId).orElseThrow(()-> new BadRequest("Can't find this Service"));
-        ser.setName(request.getName());
-        ser.setDescription(request.getDescription());
-        ser.setFigure(request.getFigure());
-        ser.setTitle(request.getTitle());
-        ser.setStatus(request.getStatus());
-        ser.setStore(account.getStore());
-        serviceRepository.save(ser);
-        return ser;
+        if(account.getStore().getStatus() != StatusEnum.BLOCKED){
+            start.entity.Service ser = serviceRepository.findById(ServiceId).orElseThrow(()-> new BadRequest("Can't find this Service"));
+            ser.setName(request.getName());
+            ser.setDescription(request.getDescription());
+            ser.setFigure(request.getFigure());
+            ser.setTitle(request.getTitle());
+            ser.setStatus(request.getStatus());
+            ser.setStore(account.getStore());
+            serviceRepository.save(ser);
+            return ser;
+        }else{
+            throw new BadRequest("Your store is blocked now, please contact to admin to unblock");
+        }
     }
-
 }

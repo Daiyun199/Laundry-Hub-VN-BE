@@ -4,10 +4,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import start.dto.request.LoginRequestDTO;
 import start.dto.request.SignUpRequestDTO;
 import start.dto.response.LoginResponse;
@@ -36,6 +33,11 @@ public class Authentication {
         return responseHandler.response(200, "Login success!", user);
     }
 
+    @PostMapping("/login/by-email")
+    public ResponseEntity loginbyEmail(@RequestParam String email){
+        return responseHandler.response(200, "Login success!", accountService.loginByEmail(email));
+    }
+
 
     @PostMapping("/signup")
     public ResponseEntity signUp(@RequestBody SignUpRequestDTO signUpRequestDTO){
@@ -49,4 +51,6 @@ public class Authentication {
         Account account= (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
       return responseHandler.response(200,"Get",account.getRole());
     }
+
+
 }

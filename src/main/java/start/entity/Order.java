@@ -40,6 +40,11 @@ public class Order {
     private float totalPriceStoUp;
     private String customerNumber;
     private Date  DayCreateOrder;
+    @Column(columnDefinition = "nvarchar(max)")
+    private String feedback;
+    @Column(columnDefinition = "nvarchar(max)")
+    private String feedbackFromStore;
+
 
 
 

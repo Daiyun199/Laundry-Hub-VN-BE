@@ -134,12 +134,15 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public Order UpdateStatus(long orderId, OrderStatusEnum status){
+    public Order UpdateStatus(long orderId, OrderStatusEnum status,String... feedback){
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("Can't not find this order"));
         if(order.getOrderStatus().equals(OrderStatusEnum.STORE_REJECT)|| order.getOrderStatus().equals(OrderStatusEnum.DONE)){
             throw new BadRequest("You can't change this order");
         }else{
             order.setOrderStatus(status);
+            if(status == OrderStatusEnum.STORE_REJECT || feedback.length>0){
+                order.setFeedbackFromStore(feedback[0]);
+            }
         }
         return orderRepository.save(order);
     }
@@ -152,7 +155,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public Order RateOrder(long orderId,float rate){
+    public Order RateOrder(long orderId,float rate,String feedback){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer cus = account.getCustomer();
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("Can't not find this order"));
@@ -170,6 +173,7 @@ public class OrderService {
             throw new  BadRequest("Can't rate this order because it isn't finished or it isn't yours");
         } else{
             order.setRate(rate);
+            order.setFeedback(feedback);
         }
         return orderRepository.save(order);
     }

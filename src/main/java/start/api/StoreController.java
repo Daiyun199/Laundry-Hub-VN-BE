@@ -25,7 +25,7 @@ public class StoreController {
         return  responseHandler.response(200,"These are all store we having", storeService.getAllStore());
     }
 
-    @PutMapping
+    @PutMapping("active-store")
     public ResponseEntity updateStatus(){
         return responseHandler.response(200,"Your store active now ", storeService.updateStatus());
     }
@@ -46,4 +46,10 @@ public class StoreController {
     public ResponseEntity updateStore(@RequestBody StoreDTO storeDTO){
         return responseHandler.response(200,"Your store is updated",storeService.updateStore(storeDTO));
     }
+    @GetMapping("information-store")
+    @PreAuthorize("hasAuthority('STORE')")
+    public ResponseEntity getCustomer(){
+        return responseHandler.response(200," This is your information",storeService.getInformationStore());
+    }
 }
+

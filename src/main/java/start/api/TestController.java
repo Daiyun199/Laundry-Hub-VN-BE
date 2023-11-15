@@ -56,10 +56,10 @@ public class TestController {
         return responseHandler.response(200, "This customer is active now",null);
     }
 
-    @PutMapping("/{storeId}/deactive-store")
+    @PutMapping("/{storeId}/blocked-store")
     public ResponseEntity deactiveStore(@PathVariable("storeId") long storeId ){
-        accountService.deactiveStore(storeId);
-        return responseHandler.response(200, "This store is deactive now",null);
+        accountService.blockedStore(storeId);
+        return responseHandler.response(200, "This store is blockedz now",null);
     }
     @PutMapping("/{storeId}/active-store")
     public ResponseEntity activeStore(@PathVariable("storeId") long storeId ){
