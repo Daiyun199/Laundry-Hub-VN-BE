@@ -3,6 +3,7 @@ package start.api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,8 @@ import start.exception.exceptions.BadRequest;
 import start.service.OrderService;
 import start.service.StoreService;
 import start.utils.ResponseHandler;
+
+import java.util.Date;
 
 @RequiredArgsConstructor
 @RestController
@@ -64,8 +67,8 @@ public class OrderController {
     }
     @PreAuthorize("hasAuthority('STORE')" )
     @PutMapping("{OrderId}/update-number-of-height")
-    public ResponseEntity updateNumberOfHeight(@PathVariable("OrderId") long orderId, float numberOfHeight){
-        return responseHandler.response(200,"Update Height successfully",orderService.updateNumberOfHeight(orderId,numberOfHeight));
+    public ResponseEntity updateNumberOfHeight(@PathVariable("OrderId") long orderId, float numberOfHeight ,   @RequestParam("dateDelivery") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date dateDelivery){
+        return responseHandler.response(200,"Update Height successfully",orderService.updateNumberOfHeight(orderId,numberOfHeight,dateDelivery));
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER')" )

@@ -45,7 +45,6 @@ public class AccountService {
     private PasswordEncoder passwordEncoder;
     public void addAccount(SignUpRequestDTO signUpData) {
         Account account = new Account();
-
         account.setUsername(signUpData.getUsername());
         account.setPassword(passwordEncoder.encode(signUpData.getPassword()));
         account.setDateCreate(new Date());

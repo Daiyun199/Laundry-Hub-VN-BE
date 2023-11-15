@@ -44,6 +44,9 @@ public class Order {
     private String feedback;
     @Column(columnDefinition = "nvarchar(max)")
     private String feedbackFromStore;
+    private Date dateExpectedDelivery;
+    private Date dateOrderDone;
+
 
 
 

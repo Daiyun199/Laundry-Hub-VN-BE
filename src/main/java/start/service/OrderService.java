@@ -139,6 +139,9 @@ public class OrderService {
         if(order.getOrderStatus().equals(OrderStatusEnum.STORE_REJECT)|| order.getOrderStatus().equals(OrderStatusEnum.DONE)){
             throw new BadRequest("You can't change this order");
         }else{
+            if(status == OrderStatusEnum.DONE){
+                order.setDateOrderDone(new Date());
+            }
             order.setOrderStatus(status);
             if(status == OrderStatusEnum.STORE_REJECT || feedback.length>0){
                 order.setFeedbackFromStore(feedback[0]);
@@ -146,12 +149,18 @@ public class OrderService {
         }
         return orderRepository.save(order);
     }
-    public Order updateNumberOfHeight(long orderId, float NumberOfHeight){
+    public Order updateNumberOfHeight(long orderId, float NumberOfHeight , Date dateExpectedDelivery){
         start.entity.Service service = serviceRepository.findServiceByOrderIdAndTitle(orderId);
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("This order doesn't exist"));
+
+            if(dateExpectedDelivery.after(order.getDayCreateOrder())){
+                order.setDateExpectedDelivery(dateExpectedDelivery);
+            }else{
+                throw new BadRequest("Invalid Date");
+            }
+
         order.setNumberOfHeightSto(NumberOfHeight);
         order.setTotalPriceStoUp(price(NumberOfHeight,service));
-
         return orderRepository.save(order);
     }
 
