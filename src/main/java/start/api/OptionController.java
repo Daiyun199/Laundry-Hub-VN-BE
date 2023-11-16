@@ -32,13 +32,18 @@ public class OptionController {
 //        return responseHandler.response(200,"Add Option Successfully",optionService.addOption(option,serviceId));
 //    }
 
-    @DeleteMapping("{OptionId}")
+    @PutMapping("deactivate-option/{OptionId}")
     @PreAuthorize("hasAuthority('STORE')")
     public ResponseEntity deleteOption(@PathVariable("OptionId") long optionId){
         optionService.deleteOption(optionId);
         return responseHandler.response(200,"Delete Successfully",null);
     }
-
+    @PutMapping("active-option/{OptionId}")
+    @PreAuthorize("hasAuthority('STORE')")
+    public ResponseEntity activeOption(@PathVariable("OptionId") long optionId){
+        optionService.activeOption(optionId);
+        return responseHandler.response(200,"Activate Successfully",null);
+    }
     @PutMapping("{OptionId}")
     @PreAuthorize("hasAuthority('STORE')")
     public ResponseEntity updateOption(@PathVariable("OptionId") long optionId, OptionDTO option){

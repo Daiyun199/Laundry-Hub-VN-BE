@@ -60,6 +60,7 @@ public class ServicesService {
                     newOption.setPrice(option.getPrice());
                     newOption.setService(service);
                     newOption.setDefaultValue(option.isDefaultValue());
+                    newOption.setStatus(StatusEnum.ACTIVE);
                     options.add(newOption);
                 }
                 else{
@@ -76,14 +77,34 @@ public class ServicesService {
     }
     public void deleteService( long serviceId ){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         if(account.getStore().getStatus() != StatusEnum.BLOCKED){
             start.entity.Service ser = serviceRepository.findById(serviceId).orElseThrow(()-> new BadRequest("Can't find this Service"));
             ser.setStore(account.getStore());
             ser.setStatus(StatusEnum.DEACTIVE);
             serviceRepository.save(ser);
+            checkStore(serviceId);
         }else{
             throw new BadRequest("Your store is blocked now, please contact to admin to unblock");
         }
+    }
+    public void checkStore(long serviceId){
+        Store store = storeRepository.findStoreByServicesId(serviceId);
+        int countWash =0;
+        int countOption =0;
+        for (start.entity.Service service : store.getServices()){
+            if(service.getTitle().equals(TitleEnum.WASH) && service.getStatus().equals(StatusEnum.ACTIVE)){
+                countWash+=1;
+            }else if(service.getTitle().equals(TitleEnum.OPTION) && service.getStatus().equals(StatusEnum.ACTIVE) ){
+                StatusEnum status = service.getStatus();
+                System.out.println(status);
+                countOption+=1;
+            }
+        }
+        if(countWash == 0 || countOption == 0){
+            store.setStatus(StatusEnum.DEACTIVE);
+        }
+        storeRepository.save(store);
     }
     public void activeService( long serviceId ){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

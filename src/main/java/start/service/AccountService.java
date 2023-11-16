@@ -13,12 +13,15 @@ import start.dto.request.SignUpRequestDTO;
 import start.dto.response.LoginResponse;
 import start.entity.Account;
 import start.entity.Customer;
+import start.entity.Order;
 import start.entity.Store;
+import start.enums.OrderStatusEnum;
 import start.enums.RoleEnum;
 import start.enums.StatusEnum;
 import start.enums.TitleEnum;
 import start.exception.exceptions.BadRequest;
 import start.repository.CustomerRepository;
+import start.repository.OrderRepository;
 import start.repository.StoreRepository;
 import start.repository.UserRepository;
 import start.utils.TokenHandler;
@@ -36,6 +39,7 @@ public class AccountService {
     private final UserRepository accountRepository;
     private final CustomerRepository customerRepository;
     private final StoreRepository storeRepository;
+    private final OrderRepository orderRepository;
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
@@ -74,6 +78,21 @@ public class AccountService {
         } else if (signUpData.getRole() == RoleEnum.ADMIN){
             account.setRole(RoleEnum.ADMIN);
             accountRepository.save(account);
+        }
+    }
+    public void blockAccount(long orderId){
+        Customer cus = customerRepository.findCustomerByOrdersId(orderId);
+        List<Order> orderList =  orderRepository.findByCustomerId(cus.getId());
+        int count = 0;
+        for(Order order : orderList){
+            if(order.getOrderStatus() == OrderStatusEnum.DONE  || order.getOrderStatus() == OrderStatusEnum.STORE_REJECT   ){
+                count  = 0;
+            }else{
+                count +=1;
+            }
+        }
+        if(count == 0 && cus.getStatus() == StatusEnum.DEACTIVE){
+            cus.setStatus(StatusEnum.BLOCKED);
         }
     }
     public LoginResponse login(LoginRequestDTO loginRequestDTO){
@@ -117,8 +136,21 @@ public class AccountService {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 //        Account acc = accountRepository.findById(accountId).orElseThrow(() -> new BadRequest("This account doesn't exist"));
         Customer cus = customerRepository.findById(customerId).orElseThrow(() -> new BadRequest("This customer doesn't exist"));
+        int count = 0;
+        List<Order> orderList =  orderRepository.findByCustomerId(customerId);
+        for(Order order : orderList){
+            if(order.getOrderStatus() == OrderStatusEnum.DONE  || order.getOrderStatus() == OrderStatusEnum.STORE_REJECT   ){
+                count  = 0;
+            }else{
+                count +=1;
+            }
+        }
         if(account.getRole().equals(RoleEnum.ADMIN)){
+            if(count !=0){
                 cus.setStatus(StatusEnum.DEACTIVE);
+            }else{
+                cus.setStatus(StatusEnum.BLOCKED);
+            }
         }else{
             throw new BadRequest("You don't have permission to delete this account");
         }

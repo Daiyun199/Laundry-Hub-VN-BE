@@ -31,6 +31,7 @@ public class OrderService {
         long customerId =account.getCustomer().getId();
         return orderRepository.findByCustomerId(customerId);
     }
+
     public List<OrderAdminDTO> getAllOrder(){
         List<OrderAdminDTO> orderAdmin = new ArrayList<>();
         List<Order> orders = orderRepository.findAllOrderWithCustomerAndStoreInformation();
@@ -78,60 +79,64 @@ public class OrderService {
     }
     public Order addOrder(OrderCusDTO orderDTO) {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        float totalPrice = 0;
-        int count = 0;
-        int countOfStore =0;
-        Date today = new Date();
-        Order order = new Order();
-        List<OrderDetail> orderDetails = new ArrayList<>();
-        Store store = null;
         Customer customer = customerRepository.findById(account.getCustomer().getId()).orElseThrow(() -> new BadRequest("This customer doesn't exist"));
-        order.setAddress(orderDTO.getAddress());
-        order.setOrderStatus(OrderStatusEnum.CREATE_ORDER);
-        order.setCustomerNumber(orderDTO.getNumberOfCustomer());
-        order.setRate(0);
-        order.setCustomer(customer);
-        order.setNumberOfHeightCus(orderDTO.getNumberOfHeightCus());
-        order.setDayCreateOrder(today);
-        order.setNumberOfHeightSto(orderDTO.getNumberOfHeightCus());
-        boolean hasDuplicates = orderDTO.getOptionIds().stream().distinct().count() < orderDTO.getOptionIds().size();
-        if (hasDuplicates) throw new BadRequest("Only choose one option one time!");
-        for (Long optionId : orderDTO.getOptionIds()) {
-            Option option = optionRepository.findById(optionId).orElseThrow(() -> new BadRequest("Cant find this option"));
-            if (option.getService().getTitle() == TitleEnum.WASH) {
-                if (count == 0) {
-                    count++;
-                } else {
-                    throw new BadRequest("Only Choose one WASH!");
+        if(customer.getStatus() == StatusEnum.ACTIVE){
+            float totalPrice = 0;
+            int count = 0;
+            int countOfStore =0;
+            Date today = new Date();
+            Order order = new Order();
+            List<OrderDetail> orderDetails = new ArrayList<>();
+            Store store = null;
+            order.setAddress(orderDTO.getAddress());
+            order.setOrderStatus(OrderStatusEnum.CREATE_ORDER);
+            order.setCustomerNumber(orderDTO.getNumberOfCustomer());
+            order.setRate(0);
+            order.setCustomer(customer);
+            order.setNumberOfHeightCus(orderDTO.getNumberOfHeightCus());
+            order.setDayCreateOrder(today);
+            order.setNumberOfHeightSto(orderDTO.getNumberOfHeightCus());
+            boolean hasDuplicates = orderDTO.getOptionIds().stream().distinct().count() < orderDTO.getOptionIds().size();
+            if (hasDuplicates) throw new BadRequest("Only choose one option one time!");
+            for (Long optionId : orderDTO.getOptionIds()) {
+                Option option = optionRepository.findById(optionId).orElseThrow(() -> new BadRequest("Cant find this option"));
+                if (option.getService().getTitle() == TitleEnum.WASH) {
+                    if (count == 0) {
+                        count++;
+                    } else {
+                        throw new BadRequest("Only Choose one WASH!");
+                    }
                 }
+                if(store!=null && option.getService().getStore()!=store){
+                    throw new BadRequest("Only choose options in the same store");
+                }
+                if(option.getService().getStatus() == StatusEnum.DEACTIVE){
+                    throw new BadRequest("This option doesn't active");
+                }
+                if (count == 0){
+                    throw new BadRequest("Please choose at least one Wash Service");
+                }
+                OrderDetail orderDetail = new OrderDetail();
+                orderDetail.setPrice(option.getPrice());
+                orderDetail.setOption(option);
+                orderDetail.setOrder(order);
+                orderDetail.setService(option.getService());
+                orderDetails.add(orderDetail);
+                if(option.getService().getTitle() == TitleEnum.WASH){
+                    totalPrice += price(orderDTO.getNumberOfHeightCus(),option.getService());
+                }else{
+                    totalPrice += option.getPrice();
+                }
+                store = option.getService().getStore();
             }
-            if(store!=null && option.getService().getStore()!=store){
-                throw new BadRequest("Only choose options in the same store");
-            }
-            if(option.getService().getStatus() == StatusEnum.DEACTIVE){
-                throw new BadRequest("This option doesn't active");
-            }
-            if (count == 0){
-                throw new BadRequest("Please choose at least one Wash Service");
-            }
-            OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setPrice(option.getPrice());
-            orderDetail.setOption(option);
-            orderDetail.setOrder(order);
-            orderDetail.setService(option.getService());
-            orderDetails.add(orderDetail);
-            if(option.getService().getTitle() == TitleEnum.WASH){
-                totalPrice += price(orderDTO.getNumberOfHeightCus(),option.getService());
-            }else{
-                totalPrice += option.getPrice();
-            }
-            store = option.getService().getStore();
+            order.setStore(store);
+            order.setTotalPrice(totalPrice);
+            order.setTotalPriceStoUp(totalPrice);
+            order.setOrderDetail(orderDetails);
+            return orderRepository.save(order);
+        }else{
+            throw new BadRequest("Your account is block and can't order service now, please contact to admin to unblock your account");
         }
-        order.setStore(store);
-        order.setTotalPrice(totalPrice);
-        order.setTotalPriceStoUp(totalPrice);
-        order.setOrderDetail(orderDetails);
-        return orderRepository.save(order);
     }
 
     public Order UpdateStatus(long orderId, OrderStatusEnum status,String... feedback){
@@ -167,8 +172,9 @@ public class OrderService {
     public Order RateOrder(long orderId,float rate,String feedback){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer cus = account.getCustomer();
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("Can't not find this order"));
-        Customer cus2 = customerRepository.findCustomerByOrdersId(orderId);
+
+            Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("Can't not find this order"));
+            Customer cus2 = customerRepository.findCustomerByOrdersId(orderId);
 //        int count =0;
 //        for(Order order1 : orders){
 //            if(order1.getId() == order.getId()){
@@ -176,16 +182,17 @@ public class OrderService {
 //            }
 //        }
 
-        // đây là check xem order được nhập vào có phải của người đang đăng nhập hay không
+            // đây là check xem order được nhập vào có phải của người đang đăng nhập hay không
 
-        if(order.getOrderStatus()!= OrderStatusEnum.DONE || cus.getId() != cus2.getId()){
-            throw new  BadRequest("Can't rate this order because it isn't finished or it isn't yours");
-        } else{
-            order.setRate(rate);
-            order.setFeedback(feedback);
+            if(order.getOrderStatus()!= OrderStatusEnum.DONE || cus.getId() != cus2.getId()){
+                throw new  BadRequest("Can't rate this order because it isn't finished or it isn't yours");
+            } else{
+                order.setRate(rate);
+                order.setFeedback(feedback);
+            }
+            return orderRepository.save(order);
         }
-        return orderRepository.save(order);
-    }
+
     public float price(float numberOfHeightCus, start.entity.Service service){
         float totalPrice =0;
         if(numberOfHeightCus <5){

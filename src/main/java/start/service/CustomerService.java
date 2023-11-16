@@ -22,11 +22,15 @@ public class CustomerService {
     public Customer UpdateCustomer(CustomerDTO request){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer customer = account.getCustomer();
-        customer.setAddress(request.getAddress());
-        customer.setName(request.getName());
-        customer.setPhoneNumber(request.getPhone_number());
-        customer.setAvatar(request.getAvatar());
-        return customerRepository.save(customer);
+        if(customer.getStatus() == StatusEnum.ACTIVE){
+            customer.setAddress(request.getAddress());
+            customer.setName(request.getName());
+            customer.setPhoneNumber(request.getPhone_number());
+            customer.setAvatar(request.getAvatar());
+            return customerRepository.save(customer);
+        }else{
+            throw new BadRequest("Your account is block now, please contact to admin to unblock");
+        }
     }
     public Customer getCustomer(){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

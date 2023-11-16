@@ -37,16 +37,16 @@ public class StoreService {
             int countWash =0;
             int countOption =0;
             for (start.entity.Service ser : store.getServices()){
-                if(ser.getTitle().equals(TitleEnum.WASH)){
+                if(ser.getTitle().equals(TitleEnum.WASH) && ser.getStatus().equals(StatusEnum.ACTIVE)){
                     countWash+=1;
-                }else if(ser.getTitle().equals(TitleEnum.OPTION)){
+                }else if(ser.getTitle().equals(TitleEnum.OPTION) && ser.getStatus().equals(StatusEnum.ACTIVE) ){
                     countOption+=1;
                 }
             }
-            if(!((countWash == 0 && countOption == 0) || (countWash == 1 && countOption == 0) || (countWash == 0 && countOption == 1))){
+            if(!(countOption == 0 || countWash == 0)){
                 store.setStatus(StatusEnum.ACTIVE);
             }else{
-                throw new BadRequest("Please choose at least one WASH SERVICE AND OPTION SERVICE before Change your store's status");
+                throw new BadRequest("Please create at least one WASH SERVICE AND OPTION SERVICE before Change your store's status");
             }
         }else{
             throw new BadRequest("Your store is blocked now, please contact admin to unblock your store");

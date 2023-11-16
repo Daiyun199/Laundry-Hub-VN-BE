@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import start.dto.request.OrderCusDTO;
 import start.enums.OrderStatusEnum;
 import start.exception.exceptions.BadRequest;
+import start.service.AccountService;
 import start.service.OrderService;
 import start.service.StoreService;
 import start.utils.ResponseHandler;
@@ -31,6 +32,8 @@ public class OrderController {
 
     @Autowired
     private StoreService storeService;
+    @Autowired
+    private AccountService accountService;
 
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
@@ -62,6 +65,9 @@ public class OrderController {
     public ResponseEntity updateStatus(@PathVariable("OrderId") long orderId, OrderStatusEnum status,@RequestParam(required = false) String feedback){
         if(status != OrderStatusEnum.STORE_REJECT && feedback != null) {
             throw new BadRequest("Feedback should only be provided for orders with status STORE_REJECT.");
+        }
+        if(status == OrderStatusEnum.DONE){
+            accountService.blockAccount(orderId);
         }
         return responseHandler.response(200,"Update status successfully",orderService.UpdateStatus(orderId,status,feedback));
     }

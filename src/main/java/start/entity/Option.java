@@ -6,6 +6,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import start.enums.RoleEnum;
+import start.enums.StatusEnum;
+import start.enums.TitleEnum;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -36,6 +38,8 @@ public class Option {
     @JoinColumn(name="service_id")
     @JsonIgnore
     private Service service;
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
 
     public void setId(long id) {
         this.id = id;

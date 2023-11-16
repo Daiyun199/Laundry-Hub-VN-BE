@@ -6,4 +6,5 @@ import start.entity.Store;
 public interface StoreRepository extends JpaRepository<Store,Long> {
     public Store findStoreById(long storeId);
     public Store findStoreByOrdersId(long OrdersId);
+    public Store findStoreByServicesId(long ServiceId);
 }
