@@ -100,7 +100,7 @@ public class OrderService {
             if (hasDuplicates) throw new BadRequest("Only choose one option one time!");
             for (Long optionId : orderDTO.getOptionIds()) {
                 Option option = optionRepository.findById(optionId).orElseThrow(() -> new BadRequest("Cant find this option"));
-                if(option.getStatus() == StatusEnum.DEACTIVE){
+                if(option.getStatus() == StatusEnum.ACTIVE){
                     if (option.getService().getTitle() == TitleEnum.WASH) {
                         if (count == 0) {
                             count++;
@@ -130,7 +130,7 @@ public class OrderService {
                     }
                     store = option.getService().getStore();
                 }else{
-                    System.out.println(option.getName());
+
                     throw new BadRequest("This options '"+option.getName()+"' is deactive now," +
                             " please choose other option");
                 }

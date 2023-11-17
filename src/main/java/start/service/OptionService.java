@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import start.dto.request.OptionDTO;
 import start.entity.Option;
 import start.enums.StatusEnum;
+import start.enums.TitleEnum;
 import start.exception.exceptions.BadRequest;
 import start.repository.OptionRepository;
 import start.repository.ServiceRepository;
@@ -33,6 +34,9 @@ public class OptionService {
         start.entity.Service service = serviceRepository.findServiceByOptionsId(OptionId);
         Option option = optionRepository.findById(OptionId).orElseThrow(() -> new BadRequest("Can't find this option"));
         option.setStatus(StatusEnum.DEACTIVE);
+        if(option.getService().getTitle() == TitleEnum.WASH){
+            option.getService().setStatus(StatusEnum.DEACTIVE);
+        }
         option.setService(service);
         optionRepository.save(option);
         checkService(service.getId());
