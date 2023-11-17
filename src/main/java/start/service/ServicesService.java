@@ -108,7 +108,20 @@ public class ServicesService {
     public void activeService( long serviceId ){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(account.getStore().getStatus() != StatusEnum.BLOCKED){
+
             start.entity.Service ser = serviceRepository.findById(serviceId).orElseThrow(()-> new BadRequest("Can't find this Service"));
+            int count = 0;
+            if(ser.getTitle() == TitleEnum.WASH){
+                for(Option option : ser.getOptions() ){
+                    if(option.getStatus() == StatusEnum.DEACTIVE){
+                        count++;
+                    }
+                }
+                if(count !=0){
+                    throw new BadRequest("please active all option in this service");
+                }
+            }
+
             ser.setStore(account.getStore());
             ser.setStatus(StatusEnum.ACTIVE);
             serviceRepository.save(ser);
