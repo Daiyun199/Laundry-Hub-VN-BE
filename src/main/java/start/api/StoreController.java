@@ -29,6 +29,10 @@ public class StoreController {
     public ResponseEntity updateStatus(){
         return responseHandler.response(200,"Your store active now ", storeService.updateStatus());
     }
+    @PutMapping("deactivate-store")
+    public ResponseEntity deactivateStore(){
+        return responseHandler.response(200,"Your store deactivate now ", storeService.deactivateStore());
+    }
 
     @GetMapping("count-store")
     public ResponseEntity countStore(){

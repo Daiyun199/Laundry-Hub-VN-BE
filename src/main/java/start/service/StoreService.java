@@ -54,6 +54,13 @@ public class StoreService {
         storeRepository.save(store);
         return store;
     }
+    public Store deactivateStore(){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Store store = account.getStore();
+        store.setStatus(StatusEnum.DEACTIVE);
+        storeRepository.save(store);
+        return store;
+    }
     public void RateStore(long orderId){
 //        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Store store = storeRepository.findStoreByOrdersId(orderId);

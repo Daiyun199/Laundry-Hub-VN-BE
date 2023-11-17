@@ -120,6 +120,9 @@ public class AccountService {
     public LoginResponse loginByEmail(String email){
         Authentication authentication = null;
         Account account = accountRepository.findUserByUsername(email);
+        if(account == null){
+            throw new BadRequest("Account not found!");
+        }
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setId(account.getId());
         loginResponse.setUsername(account.getUsername());
@@ -136,21 +139,9 @@ public class AccountService {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 //        Account acc = accountRepository.findById(accountId).orElseThrow(() -> new BadRequest("This account doesn't exist"));
         Customer cus = customerRepository.findById(customerId).orElseThrow(() -> new BadRequest("This customer doesn't exist"));
-        int count = 0;
-        List<Order> orderList =  orderRepository.findByCustomerId(customerId);
-        for(Order order : orderList){
-            if(order.getOrderStatus() == OrderStatusEnum.DONE  || order.getOrderStatus() == OrderStatusEnum.STORE_REJECT   ){
-                count  = 0;
-            }else{
-                count +=1;
-            }
-        }
         if(account.getRole().equals(RoleEnum.ADMIN)){
-            if(count !=0){
-                cus.setStatus(StatusEnum.DEACTIVE);
-            }else{
+
                 cus.setStatus(StatusEnum.BLOCKED);
-            }
         }else{
             throw new BadRequest("You don't have permission to delete this account");
         }
@@ -182,17 +173,17 @@ public class AccountService {
         int countWash =0;
         int countOption =0;
         for (start.entity.Service ser : store.getServices()){
-            if(ser.getTitle().equals(TitleEnum.WASH)){
+            if(ser.getTitle().equals(TitleEnum.WASH) && ser.getStatus().equals(StatusEnum.ACTIVE)){
                 countWash+=1;
-            }else if(ser.getTitle().equals(TitleEnum.OPTION)){
+            }else if(ser.getTitle().equals(TitleEnum.OPTION) && ser.getStatus().equals(StatusEnum.ACTIVE)){
                 countOption+=1;
             }
         }
         if(account.getRole().equals(RoleEnum.ADMIN)){
-            if(!((countWash == 0 && countOption == 0) || (countWash == 1 && countOption == 0) || (countWash == 0 && countOption == 1))){
+            if(!(countOption ==0 || countWash == 0)){
                 store.setStatus(StatusEnum.ACTIVE);
             }else{
-                throw new BadRequest("This store The store is not eligible to operate");
+                store.setStatus(StatusEnum.DEACTIVE);
             }
         }else{
             throw new BadRequest("You don't have permission to delete this account");

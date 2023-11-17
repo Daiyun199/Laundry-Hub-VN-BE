@@ -73,8 +73,8 @@ public class OrderController {
     }
     @PreAuthorize("hasAuthority('STORE')" )
     @PutMapping("{OrderId}/update-number-of-height")
-    public ResponseEntity updateNumberOfHeight(@PathVariable("OrderId") long orderId, float numberOfHeight ,   @RequestParam("dateDelivery") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date dateDelivery){
-        return responseHandler.response(200,"Update Height successfully",orderService.updateNumberOfHeight(orderId,numberOfHeight,dateDelivery));
+    public ResponseEntity updateNumberOfHeight(@PathVariable("OrderId") long orderId, float numberOfHeight ){
+        return responseHandler.response(200,"Update Height successfully",orderService.updateNumberOfHeight(orderId,numberOfHeight));
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER')" )

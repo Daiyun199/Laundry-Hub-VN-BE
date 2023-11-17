@@ -35,7 +35,8 @@ public class Authentication {
 
     @PostMapping("/login/by-email")
     public ResponseEntity loginbyEmail(@RequestParam String email){
-        return responseHandler.response(200, "Login success!", accountService.loginByEmail(email));
+        return responseHandler.response(200, "Login success!",
+                accountService.loginByEmail(email));
     }
 
 

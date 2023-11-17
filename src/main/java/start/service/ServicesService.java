@@ -77,7 +77,6 @@ public class ServicesService {
     }
     public void deleteService( long serviceId ){
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         if(account.getStore().getStatus() != StatusEnum.BLOCKED){
             start.entity.Service ser = serviceRepository.findById(serviceId).orElseThrow(()-> new BadRequest("Can't find this Service"));
             ser.setStore(account.getStore());

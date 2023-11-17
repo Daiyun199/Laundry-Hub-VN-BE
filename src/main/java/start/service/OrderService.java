@@ -100,34 +100,41 @@ public class OrderService {
             if (hasDuplicates) throw new BadRequest("Only choose one option one time!");
             for (Long optionId : orderDTO.getOptionIds()) {
                 Option option = optionRepository.findById(optionId).orElseThrow(() -> new BadRequest("Cant find this option"));
-                if (option.getService().getTitle() == TitleEnum.WASH) {
-                    if (count == 0) {
-                        count++;
-                    } else {
-                        throw new BadRequest("Only Choose one WASH!");
+                if(option.getStatus() == StatusEnum.DEACTIVE){
+                    if (option.getService().getTitle() == TitleEnum.WASH) {
+                        if (count == 0) {
+                            count++;
+                        } else {
+                            throw new BadRequest("Only Choose one WASH!");
+                        }
                     }
-                }
-                if(store!=null && option.getService().getStore()!=store){
-                    throw new BadRequest("Only choose options in the same store");
-                }
-                if(option.getService().getStatus() == StatusEnum.DEACTIVE){
-                    throw new BadRequest("This option doesn't active");
-                }
-                if (count == 0){
-                    throw new BadRequest("Please choose at least one Wash Service");
-                }
-                OrderDetail orderDetail = new OrderDetail();
-                orderDetail.setPrice(option.getPrice());
-                orderDetail.setOption(option);
-                orderDetail.setOrder(order);
-                orderDetail.setService(option.getService());
-                orderDetails.add(orderDetail);
-                if(option.getService().getTitle() == TitleEnum.WASH){
-                    totalPrice += price(orderDTO.getNumberOfHeightCus(),option.getService());
+                    if(store!=null && option.getService().getStore()!=store){
+                        throw new BadRequest("Only choose options in the same store");
+                    }
+                    if(option.getService().getStatus() == StatusEnum.DEACTIVE){
+                        throw new BadRequest("This option doesn't active");
+                    }
+                    if (count == 0){
+                        throw new BadRequest("Please choose at least one Wash Service");
+                    }
+                    OrderDetail orderDetail = new OrderDetail();
+                    orderDetail.setPrice(option.getPrice());
+                    orderDetail.setOption(option);
+                    orderDetail.setOrder(order);
+                    orderDetail.setService(option.getService());
+                    orderDetails.add(orderDetail);
+                    if(option.getService().getTitle() == TitleEnum.WASH){
+                        totalPrice += price(orderDTO.getNumberOfHeightCus(),option.getService());
+                    }else{
+                        totalPrice += option.getPrice();
+                    }
+                    store = option.getService().getStore();
                 }else{
-                    totalPrice += option.getPrice();
+                    System.out.println(option.getName());
+                    throw new BadRequest("This options '"+option.getName()+"' is deactive now," +
+                            " please choose other option");
                 }
-                store = option.getService().getStore();
+
             }
             order.setStore(store);
             order.setTotalPrice(totalPrice);
@@ -154,16 +161,9 @@ public class OrderService {
         }
         return orderRepository.save(order);
     }
-    public Order updateNumberOfHeight(long orderId, float NumberOfHeight , Date dateExpectedDelivery){
+    public Order updateNumberOfHeight(long orderId, float NumberOfHeight){
         start.entity.Service service = serviceRepository.findServiceByOrderIdAndTitle(orderId);
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BadRequest("This order doesn't exist"));
-
-            if(dateExpectedDelivery.after(order.getDayCreateOrder())){
-                order.setDateExpectedDelivery(dateExpectedDelivery);
-            }else{
-                throw new BadRequest("Invalid Date");
-            }
-
         order.setNumberOfHeightSto(NumberOfHeight);
         order.setTotalPriceStoUp(price(NumberOfHeight,service));
         return orderRepository.save(order);
