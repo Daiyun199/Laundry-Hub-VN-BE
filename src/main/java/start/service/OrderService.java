@@ -81,66 +81,71 @@ public class OrderService {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer customer = customerRepository.findById(account.getCustomer().getId()).orElseThrow(() -> new BadRequest("This customer doesn't exist"));
         if(customer.getStatus() == StatusEnum.ACTIVE){
-            float totalPrice = 0;
-            int count = 0;
-            int countOfStore =0;
-            Date today = new Date();
-            Order order = new Order();
-            List<OrderDetail> orderDetails = new ArrayList<>();
-            Store store = null;
-            order.setAddress(orderDTO.getAddress());
-            order.setOrderStatus(OrderStatusEnum.CREATE_ORDER);
-            order.setCustomerNumber(orderDTO.getNumberOfCustomer());
-            order.setRate(0);
-            order.setCustomer(customer);
-            order.setNumberOfHeightCus(orderDTO.getNumberOfHeightCus());
-            order.setDayCreateOrder(today);
-            order.setNumberOfHeightSto(orderDTO.getNumberOfHeightCus());
-            boolean hasDuplicates = orderDTO.getOptionIds().stream().distinct().count() < orderDTO.getOptionIds().size();
-            if (hasDuplicates) throw new BadRequest("Only choose one option one time!");
-            for (Long optionId : orderDTO.getOptionIds()) {
-                Option option = optionRepository.findById(optionId).orElseThrow(() -> new BadRequest("Cant find this option"));
-                if(option.getStatus() == StatusEnum.ACTIVE){
-                    if (option.getService().getTitle() == TitleEnum.WASH) {
-                        if (count == 0) {
-                            count++;
-                        } else {
-                            throw new BadRequest("Only Choose one WASH!");
+            if(orderDTO.getNumberOfHeightCus()>0){
+                float totalPrice = 0;
+                int count = 0;
+                int countOfStore =0;
+                Date today = new Date();
+                Order order = new Order();
+                List<OrderDetail> orderDetails = new ArrayList<>();
+                Store store = null;
+                order.setAddress(orderDTO.getAddress());
+                order.setOrderStatus(OrderStatusEnum.CREATE_ORDER);
+                order.setCustomerNumber(orderDTO.getNumberOfCustomer());
+                order.setRate(0);
+                order.setCustomer(customer);
+                order.setNumberOfHeightCus(orderDTO.getNumberOfHeightCus());
+                order.setDayCreateOrder(today);
+                order.setNumberOfHeightSto(orderDTO.getNumberOfHeightCus());
+                boolean hasDuplicates = orderDTO.getOptionIds().stream().distinct().count() < orderDTO.getOptionIds().size();
+                if (hasDuplicates) throw new BadRequest("Only choose one option one time!");
+                for (Long optionId : orderDTO.getOptionIds()) {
+                    Option option = optionRepository.findById(optionId).orElseThrow(() -> new BadRequest("Cant find this option"));
+                    if(option.getStatus() == StatusEnum.ACTIVE){
+                        if (option.getService().getTitle() == TitleEnum.WASH) {
+                            if (count == 0) {
+                                count++;
+                            } else {
+                                throw new BadRequest("Only Choose one WASH!");
+                            }
                         }
-                    }
-                    if(store!=null && option.getService().getStore()!=store){
-                        throw new BadRequest("Only choose options in the same store");
-                    }
-                    if(option.getService().getStatus() == StatusEnum.DEACTIVE){
-                        throw new BadRequest("This option doesn't active");
-                    }
-                    if (count == 0){
-                        throw new BadRequest("Please choose at least one Wash Service");
-                    }
-                    OrderDetail orderDetail = new OrderDetail();
-                    orderDetail.setPrice(option.getPrice());
-                    orderDetail.setOption(option);
-                    orderDetail.setOrder(order);
-                    orderDetail.setService(option.getService());
-                    orderDetails.add(orderDetail);
-                    if(option.getService().getTitle() == TitleEnum.WASH){
-                        totalPrice += price(orderDTO.getNumberOfHeightCus(),option.getService());
+                        if(store!=null && option.getService().getStore()!=store){
+                            throw new BadRequest("Only choose options in the same store");
+                        }
+                        if(option.getService().getStatus() == StatusEnum.DEACTIVE){
+                            throw new BadRequest("This option doesn't active");
+                        }
+                        if (count == 0){
+                            throw new BadRequest("Please choose at least one Wash Service");
+                        }
+                        OrderDetail orderDetail = new OrderDetail();
+                        orderDetail.setPrice(option.getPrice());
+                        orderDetail.setOption(option);
+                        orderDetail.setOrder(order);
+                        orderDetail.setService(option.getService());
+                        orderDetails.add(orderDetail);
+                        if(option.getService().getTitle() == TitleEnum.WASH){
+                            totalPrice += price(orderDTO.getNumberOfHeightCus(),option.getService());
+                        }else{
+                            totalPrice += option.getPrice();
+                        }
+                        store = option.getService().getStore();
                     }else{
-                        totalPrice += option.getPrice();
+
+                        throw new BadRequest("This options '"+option.getName()+"' is deactive now," +
+                                " please choose other option");
                     }
-                    store = option.getService().getStore();
-                }else{
 
-                    throw new BadRequest("This options '"+option.getName()+"' is deactive now," +
-                            " please choose other option");
                 }
-
+                order.setStore(store);
+                order.setTotalPrice(totalPrice);
+                order.setTotalPriceStoUp(totalPrice);
+                order.setOrderDetail(orderDetails);
+                return orderRepository.save(order);
+            }else{
+                throw new BadRequest("You cannot enter negative number of height");
             }
-            order.setStore(store);
-            order.setTotalPrice(totalPrice);
-            order.setTotalPriceStoUp(totalPrice);
-            order.setOrderDetail(orderDetails);
-            return orderRepository.save(order);
+
         }else{
             throw new BadRequest("Your account is block and can't order service now, please contact to admin to unblock your account");
         }
